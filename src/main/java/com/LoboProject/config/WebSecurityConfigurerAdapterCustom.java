@@ -53,7 +53,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
     public void configure(WebSecurity web) throws Exception {
         //web.ignoring().antMatchers("/actuator/**");
     	web.ignoring().antMatchers("/*");
-        //web.ignoring().antMatchers("/*/*");
+        web.ignoring().antMatchers("/*/*");
         //web.ignoring().antMatchers("/*/*/*");
     }
     
