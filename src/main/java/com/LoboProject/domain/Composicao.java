@@ -8,11 +8,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 @Entity
 public class Composicao {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private Long codigo;
 	
 	@NotNull
@@ -38,8 +41,9 @@ public class Composicao {
 	public void setProdutoParte(Produto produtoParte) {
 		this.produtoParte = produtoParte;
 	}
-
-	public Long getCodigo() {
+	
+	@JsonIgnore
+	private Long getCodigo() {
 		return codigo;
 	}
 

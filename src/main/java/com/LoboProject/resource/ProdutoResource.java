@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.repository.ProdutoRepository;
 
@@ -55,16 +57,24 @@ public class ProdutoResource {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Produto> atualizarSetor(@PathVariable String id, @Valid @RequestBody Produto produto){
-		return produtoRepository.findById(id)
+	public ResponseEntity<Produto> atualizarSetor(@PathVariable String id,@Valid @RequestBody Produto produto){
+		
+		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		
+		else{
+			return produtoRepository.findById(id)
+		
 		           .map(record -> {
 		               record.setDescricao(produto.getDescricao());
 		               record.setQuantidadeAtual(produto.getQuantidadeAtual());
 		               record.setQuantidadeMin(produto.getQuantidadeMin());
+		               record.setQuantidadeMax(produto.getQuantidadeMax());
 		               record.setSetor(produto.getSetor());
+		               record.setComposicao(produto.getComposicao());
 		               Produto updated = produtoRepository.save(record);
 		               return ResponseEntity.ok().body(updated);
 		           }).orElse(ResponseEntity.notFound().build());
+		}
 	}
 	
 }
