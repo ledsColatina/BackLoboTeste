@@ -7,9 +7,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
-import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Produto;
+import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
 
 
@@ -20,6 +19,9 @@ public class ProdutoResource {
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private ComposicaoRepository composicaoRepository;
 	
 	
 	@GetMapping
@@ -50,15 +52,23 @@ public class ProdutoResource {
 		return ResponseEntity.status(HttpStatus.OK).body(produtoSalvo);
 	}
 	
-	@DeleteMapping("/{codigo}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deletarProduto(@PathVariable String codigo){
-		produtoRepository.deleteById(codigo);
+	public void deletarProduto(@PathVariable String id){
+		int i = 0;
+		while(produtoRepository.findById(id).get().getComposicao().isEmpty() != true) {
+			System.out.println("passei aqui");
+			composicaoRepository.delete(produtoRepository.findById(id).get().getComposicao().get(i));
+			i++;
+		}
+		produtoRepository.deleteById(id);
 	}
 	
+	
 	@PutMapping("/{id}")
+	@SuppressWarnings("unlikely-arg-type")
 	public ResponseEntity<Produto> atualizarSetor(@PathVariable String id,@Valid @RequestBody Produto produto){
-		
+
 		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		
 		else{

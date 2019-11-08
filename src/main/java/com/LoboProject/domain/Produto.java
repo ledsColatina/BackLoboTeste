@@ -32,7 +32,7 @@ public class Produto {
 	@JoinColumn(name = "id_Setor")
 	private Setor setor;
 	
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="id_produto_todo")
 	private List<Composicao> composicao;
 	

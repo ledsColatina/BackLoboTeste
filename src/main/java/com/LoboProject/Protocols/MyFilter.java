@@ -5,22 +5,18 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.LoboProject.config.property.loboApiProperty;
 
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class MyFilter extends OncePerRequestFilter {
 	
-	@Autowired
-	private loboApiProperty loboApiproperty;
+	/*@Autowired
+	private loboApiProperty loboApiproperty;*/
 	
 	@Override
 	public void destroy() {

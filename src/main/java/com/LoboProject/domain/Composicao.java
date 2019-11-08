@@ -43,7 +43,7 @@ public class Composicao {
 	}
 	
 	@JsonIgnore
-	private Long getCodigo() {
+	public Long getCodigo() {
 		return codigo;
 	}
 

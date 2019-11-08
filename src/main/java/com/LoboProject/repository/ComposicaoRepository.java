@@ -5,4 +5,5 @@ import com.LoboProject.domain.Composicao;
 
 public interface ComposicaoRepository extends JpaRepository<Composicao, Long>{
 	
+	
 }
