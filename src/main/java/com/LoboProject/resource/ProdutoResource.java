@@ -12,7 +12,6 @@ import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
 
 
-
 @RestController
 @RequestMapping("/produtos")
 public class ProdutoResource {
@@ -80,7 +79,6 @@ public class ProdutoResource {
 		
 		else{
 			return produtoRepository.findById(id)
-		
 		           .map(record -> {
 		               record.setDescricao(produto.getDescricao());
 		               record.setQuantidadeAtual(produto.getQuantidadeAtual());
