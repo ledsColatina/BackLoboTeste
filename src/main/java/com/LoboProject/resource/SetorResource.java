@@ -62,6 +62,7 @@ public class SetorResource {
 		setorRepository.deleteById(id);
 	}
 	
+	
 	@PutMapping("/{id}")
 	public ResponseEntity<Setor> atualizarSetor(@PathVariable Long id, @Valid @RequestBody Setor setor){
 		return setorRepository.findById(id)

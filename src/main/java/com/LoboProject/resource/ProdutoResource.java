@@ -55,15 +55,22 @@ public class ProdutoResource {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarProduto(@PathVariable String id){
-		int i = 0;
-		while(produtoRepository.findById(id).get().getComposicao().isEmpty() != true) {
-			System.out.println("passei aqui");
-			composicaoRepository.delete(produtoRepository.findById(id).get().getComposicao().get(i));
-			i++;
-		}
+		composicaoRepository.deleteByprodutoParte_codigo(id);
 		produtoRepository.deleteById(id);
 	}
 	
+	@DeleteMapping("/all")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void DeletarLoteProdutos(@RequestBody List<String> produtos) {
+		int i = 0;
+		while((produtos.get(i) != null)&&(produtos.get(i) != "")) {	
+			if(composicaoRepository.findAllByProdutoParte_codigo(produtos.get(i))!= null) composicaoRepository.deleteByprodutoParte_codigo(produtos.get(i));
+			produtoRepository.deleteById(produtos.get(i));
+			produtos.remove(i);
+			i++;
+		}
+		
+	}
 	
 	@PutMapping("/{id}")
 	@SuppressWarnings("unlikely-arg-type")

@@ -1,10 +1,12 @@
-INSERT INTO usuario (codigo, nome, email, senha) values (1, 'Administrador' , 'sandro@gmail.com', 'admin');
-INSERT INTO usuario (codigo, nome, email, senha) values (2, 'Maria' , 'maria@gmail.com', 'admin');
-
-INSERT INTO permissao (codigo, descricao) values (1, 'ROLE_CRIARSETOR');
-INSERT INTO permissao (codigo, descricao) values (2, 'ROLE_LISTARSETOR');
-
-INSERT INTO usuario_permissao (codigo_usuario, codigo_permissao) values (1,1);
-INSERT INTO usuario_permissao (codigo_usuario, codigo_permissao) values (1,2);
+CREATE TABLE setor(
+	
+	
+	
+	private Long id;
+	
+	private String descricao;
+	
+	private boolean base;
+);
 
 
