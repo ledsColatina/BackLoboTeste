@@ -74,7 +74,7 @@ public class ProdutoResource {
 	
 	@PutMapping("/{id}")
 	@SuppressWarnings("unlikely-arg-type")
-	public ResponseEntity<Produto> atualizarSetor(@PathVariable String id,@Valid @RequestBody Produto produto){
+	public ResponseEntity<Produto> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
 
 		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		
@@ -94,4 +94,17 @@ public class ProdutoResource {
 		}
 	}
 	
+	@PutMapping("/{id}/{quantidadeAtual}")
+	public ResponseEntity<Produto> registrarProducao(@PathVariable String id,@PathVariable Long quantidadeAtual){
+		
+		Optional<Produto> x = produtoRepository.findById(id);
+		
+		return produtoRepository.findById(id)
+		    .map(record -> {
+		    record.setQuantidadeAtual(x.get().getQuantidadeAtual() + quantidadeAtual);
+		    Produto updated = produtoRepository.save(record);
+		    return ResponseEntity.ok().body(updated);
+		    }).orElse(ResponseEntity.notFound().build());
+	}
+
 }
