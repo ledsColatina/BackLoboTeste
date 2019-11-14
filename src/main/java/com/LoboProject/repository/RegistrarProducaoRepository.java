@@ -8,8 +8,8 @@ import com.LoboProject.domain.RegistrarProducao;
 public interface RegistrarProducaoRepository extends JpaRepository<RegistrarProducao, Long>{
 
 
-	List<RegistrarProducao> findTop10ByOrderByCodigoDesc();
+	List<RegistrarProducao> findTop50ByOrderByCodigoDesc();
 
 	
-	
+
 }

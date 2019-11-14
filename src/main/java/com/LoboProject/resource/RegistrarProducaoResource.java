@@ -36,9 +36,9 @@ public class RegistrarProducaoResource {
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/top10")
+	@GetMapping("/top50")
 	public ResponseEntity<?> listarSetor2(){
-		List<RegistrarProducao> producao = producaoRepository.findTop10ByOrderByCodigoDesc();
+		List<RegistrarProducao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
@@ -58,6 +58,10 @@ public class RegistrarProducaoResource {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarProduto(@PathVariable Long id){
+		Optional<RegistrarProducao> prod = producaoRepository.findById(id);
+		Optional<Produto> x = produtoRepository.findById(prod.get().getProduto().getCodigo());
+		x.get().setQuantidadeAtual(x.get().getQuantidadeAtual() - prod.get().getQuantidade());
+		produtoRepository.save(x.get());
 		producaoRepository.deleteById(id);
 	}
 
