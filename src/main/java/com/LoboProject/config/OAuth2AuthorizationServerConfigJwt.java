@@ -48,8 +48,12 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
 
         final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-        endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain)
-        .authenticationManager(authenticationManager).reuseRefreshTokens(false);
+        
+        endpoints
+        	.tokenStore(tokenStore())
+        	.tokenEnhancer(tokenEnhancerChain)
+        	.reuseRefreshTokens(false)
+        	.authenticationManager(authenticationManager);
         
     }
     
