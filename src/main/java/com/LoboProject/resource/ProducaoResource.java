@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.LoboProject.domain.Producao;
 import com.LoboProject.domain.Produto;
-import com.LoboProject.domain.RegistrarProducao;
 import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.repository.RegistrarProducaoRepository;
 
 @RestController
 @RequestMapping("/producao")
-public class RegistrarProducaoResource {
+public class ProducaoResource {
 
 	@Autowired
 	private RegistrarProducaoRepository producaoRepository;
@@ -32,25 +33,25 @@ public class RegistrarProducaoResource {
 	
 	@GetMapping
 	public ResponseEntity<?> listarSetor(){
-		List<RegistrarProducao> producao = producaoRepository.findAll();
+		List<Producao> producao = producaoRepository.findAll();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/top50")
 	public ResponseEntity<?> listarSetor2(){
-		List<RegistrarProducao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
+		List<Producao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
 	
 	@PostMapping()
-	public ResponseEntity<RegistrarProducao> criarProduto(@Valid @RequestBody RegistrarProducao producao, HttpServletResponse response) {
+	public ResponseEntity<Producao> criarProduto(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		producao.setData(new java.util.Date(System.currentTimeMillis()));
 		Optional<Produto> x = produtoRepository.findById(producao.getProduto().getCodigo());
 		x.get().setQuantidadeAtual(x.get().getQuantidadeAtual() + producao.getQuantidade());
 		producao.setProduto(x.get());
 		produtoRepository.save(x.get());
-		RegistrarProducao producaoSalva = producaoRepository.save(producao);
+		Producao producaoSalva = producaoRepository.save(producao);
 		return ResponseEntity.status(HttpStatus.OK).body(producaoSalva);
 	}
 	
@@ -58,7 +59,7 @@ public class RegistrarProducaoResource {
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarProduto(@PathVariable Long id){
-		Optional<RegistrarProducao> prod = producaoRepository.findById(id);
+		Optional<Producao> prod = producaoRepository.findById(id);
 		Optional<Produto> x = produtoRepository.findById(prod.get().getProduto().getCodigo());
 		x.get().setQuantidadeAtual(x.get().getQuantidadeAtual() - prod.get().getQuantidade());
 		produtoRepository.save(x.get());

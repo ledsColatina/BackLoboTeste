@@ -1,14 +1,14 @@
 package com.LoboProject.repository;
 
 import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.LoboProject.domain.RegistrarProducao;
-
-public interface RegistrarProducaoRepository extends JpaRepository<RegistrarProducao, Long>{
+import com.LoboProject.domain.Producao;
 
 
-	List<RegistrarProducao> findTop50ByOrderByCodigoDesc();
+public interface RegistrarProducaoRepository extends JpaRepository<Producao, Long>{
+
+
+	List<Producao> findTop50ByOrderByCodigoDesc();
 
 	
 
