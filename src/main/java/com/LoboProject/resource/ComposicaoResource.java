@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.LoboProject.Projection.ResumoComposicao;
 import com.LoboProject.domain.Composicao;
 import com.LoboProject.repository.ComposicaoRepository;
 
@@ -23,6 +25,13 @@ public class ComposicaoResource {
 	@GetMapping
 	public ResponseEntity<List<Composicao>> listarComposicao(){
 		List<Composicao> composicao = composicaorepository.findAll();
+		return !composicao.isEmpty() ? ResponseEntity.ok(composicao) : ResponseEntity.noContent().build();
+	}
+	
+
+	@GetMapping("/resumo")
+	public ResponseEntity<List<ResumoComposicao>> resumo(){
+		List<ResumoComposicao> composicao = composicaorepository.resumir();
 		return !composicao.isEmpty() ? ResponseEntity.ok(composicao) : ResponseEntity.noContent().build();
 	}
 	
