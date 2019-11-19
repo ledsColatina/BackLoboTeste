@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+
+import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
@@ -26,6 +28,12 @@ public class ProdutoResource {
 	@GetMapping
 	public ResponseEntity<List<Produto>> listarProduto(){
 		List<Produto> produto = produtoRepository.findAll();
+		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/resumo")
+	public ResponseEntity<List<ResumoProduto>> resumir(){
+		List<ResumoProduto> produto = produtoRepository.resumir();
 		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
 	}
 	

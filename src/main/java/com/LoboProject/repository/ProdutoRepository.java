@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
 
 public interface ProdutoRepository extends JpaRepository<Produto, String>{
@@ -12,4 +13,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, String>{
 
 	public List<Produto> findBySetor_id(Long id_Setor);
 	
+	public List<ResumoProduto> resumir();
 }
