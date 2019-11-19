@@ -54,7 +54,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
         //web.ignoring().antMatchers("/actuator/**");
     	web.ignoring().antMatchers("/*");
         web.ignoring().antMatchers("/*/*");
-        //web.ignoring().antMatchers("/*/*/*");
+        web.ignoring().antMatchers("/*/*/*");
     }
     
 	public PasswordEncoder passwordEncoder() {
