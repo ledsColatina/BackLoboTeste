@@ -25,8 +25,9 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery{
 		Root<Produto> root = criteria.from(Produto.class);
 		
 		criteria.select(builder.construct(ResumoProduto.class
-				, root.get(Produto_.CODIGO), root.get(Produto_.DESCRICAO)
-				, root.get(Produto_.SETOR).get(Setor_.DESCRICAO) , root.get(Produto_.QUANTIDADE_ATUAL)));
+				, root.get(Produto_.codigo), root.get(Produto_.descricao)
+				, root.get(Produto_.setor).get(Setor_.descricao)
+				, root.get(Produto_.quantidadeAtual)));
 		
 		TypedQuery<ResumoProduto> query = manager.createQuery(criteria);
 		return query.getResultList();
