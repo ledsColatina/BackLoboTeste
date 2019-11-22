@@ -14,4 +14,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, String>{
 	public List<Produto> findBySetor_id(Long id_Setor);
 	
 	public List<ResumoProduto> resumir();
+
 }

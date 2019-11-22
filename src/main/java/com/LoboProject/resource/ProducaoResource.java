@@ -44,14 +44,53 @@ public class ProducaoResource {
 	
 	
 	@PostMapping()
-	public ResponseEntity<Producao> criarProduto(@Valid @RequestBody Producao producao, HttpServletResponse response) {
+	public  ResponseEntity<?> criarProduto(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		producao.setData(new java.util.Date(System.currentTimeMillis()));
 		Optional<Produto> x = produtoRepository.findById(producao.getProduto().getCodigo());
 		x.get().setQuantidadeAtual(x.get().getQuantidadeAtual() + producao.getQuantidade());
 		producao.setProduto(x.get());
-		produtoRepository.save(x.get());
-		Producao producaoSalva = producaoRepository.save(producao);
-		return ResponseEntity.status(HttpStatus.OK).body(producaoSalva);
+		
+		if(verificarComp(x.get(), producao) == 1) {
+		int i = 0;
+		if(!x.get().getComposicao().isEmpty()) {
+			for(i = 0; i < x.get().getComposicao().size(); i++) {
+				if(!x.get().getComposicao().isEmpty()) {
+					x = decrementarComposicao(x,producao, i);
+				}
+			}
+		}
+			produtoRepository.save(x.get());
+			// Salvando_producao
+			Producao producaoSalva = producaoRepository.save(producao);
+			return ResponseEntity.status(HttpStatus.OK).body(producaoSalva);
+		}
+		else return ResponseEntity.status(HttpStatus.CONFLICT).build();
+	}
+	
+	
+	public int verificarComp(Produto produto, Producao prod) {
+		int i = 0;
+		if(!produto.getComposicao().isEmpty()) {
+			for(i = 0; i < produto.getComposicao().size(); i++) {
+				if((produto.getComposicao().get(i).getProdutoParte().getQuantidadeAtual() < (produto.getComposicao().get(i).getQuantidade() * prod.getQuantidade()))){
+					return 0;
+				}
+			}
+		}
+		return 1;
+		
+	}
+	
+	
+	public Optional<Produto> decrementarComposicao(Optional<Produto> x, Producao prod, int i) {
+		Long valor;
+		
+		if(x.get() != null) {
+			valor = (x.get().getComposicao().get(i).getProdutoParte().getQuantidadeAtual() - (x.get().getComposicao().get(i).getQuantidade() * prod.getQuantidade()));
+			x.get().getComposicao().get(i).getProdutoParte().setQuantidadeAtual(valor);
+			produtoRepository.save(x.get().getComposicao().get(i).getProdutoParte());
+		}
+		return x;
 	}
 	
 	
