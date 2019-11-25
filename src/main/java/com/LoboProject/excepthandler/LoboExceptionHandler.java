@@ -63,7 +63,7 @@ public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler({ InvalidDataAccessApiUsageException.class })
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<Object> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex, WebRequest req){
-		String mensagemUsuario = messagesource.getMessage("recurso.Nao-existe-para-Referencia",null, LocaleContextHolder.getLocale());
+		String mensagemUsuario = messagesource.getMessage("recurso.pertencente-a-composicao",null, LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);

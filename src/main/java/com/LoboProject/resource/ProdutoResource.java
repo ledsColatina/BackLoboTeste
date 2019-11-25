@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.repository.ComposicaoRepository;
