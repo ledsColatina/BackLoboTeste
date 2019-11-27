@@ -90,12 +90,12 @@ public class ProdutoResource {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<Produto> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
-		System.out.println("\n AAAAAAAAAAAAAAA " + CompararBD(produto) + "\n ");
+		System.out.println("\n AAAAAAAAAAAAAAA " + CompararBD(produto, id) + "\n ");
 		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 	
-		else if (CompararBD(produto) == 0) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		else if (CompararBD(produto, id) == 0) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		
-		else if (CompararBD(produto) == 1){
+		else if (CompararBD(produto, id) == 1){
 			return produtoRepository.findById(id)
 		           .map(record -> {
 		               record.setDescricao(produto.getDescricao());
@@ -112,13 +112,13 @@ public class ProdutoResource {
 	}
 	
 	
-	public int CompararBD(Produto produto) {
+	public int CompararBD(Produto produto, String id) {
 		int i;
 		int j;
-		List<Produto> x = produtoRepository.findByComposicao_ProdutoParte_codigo(produto.getCodigo());
+		List<Produto> x = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
 		for(i = 0; i < x.size(); i++) {
 			for(j = 0; j < produto.getComposicao().size(); j++) {
-				System.out.println("\n ENTREI AQUII \n");
+	
 				if ((x.get(i).getCodigo().equals(produto.getComposicao().get(j).getProdutoParte().getCodigo()) ==  true) ||(x.get(i).getCodigo() == produto.getComposicao().get(j).getProdutoParte().getCodigo())) {
 					System.out.println("\n ENTREI AQUII 2222\n");
 					return 0;
