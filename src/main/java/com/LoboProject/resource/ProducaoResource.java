@@ -72,9 +72,11 @@ public class ProducaoResource {
 		int i = 0;
 		if(!produto.getComposicao().isEmpty()) {
 			for(i = 0; i < produto.getComposicao().size(); i++) {
+				
 				if((produto.getComposicao().get(i).getProdutoParte().getQuantidadeAtual() < (produto.getComposicao().get(i).getQuantidade() * prod.getQuantidade()))){
 					return 0;
-				}
+				}	
+				
 			}
 		}
 		return 1;
@@ -87,6 +89,7 @@ public class ProducaoResource {
 		
 		if(x.get() != null) {
 			valor = (x.get().getComposicao().get(i).getProdutoParte().getQuantidadeAtual() - (x.get().getComposicao().get(i).getQuantidade() * prod.getQuantidade()));
+			if(valor < 0) return null;
 			x.get().getComposicao().get(i).getProdutoParte().setQuantidadeAtual(valor);
 			produtoRepository.save(x.get().getComposicao().get(i).getProdutoParte());
 		}

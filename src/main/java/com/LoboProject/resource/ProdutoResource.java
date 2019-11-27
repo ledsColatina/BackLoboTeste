@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
@@ -48,6 +49,11 @@ public class ProdutoResource {
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/comp/{id}")
+	public ResponseEntity<List<Produto>> buscarProdutoPorcomp(@PathVariable String id){
+		List<Produto> produtos = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
+		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
+	}
 	
 	@PostMapping()
 	public ResponseEntity<Produto> criarProduto(@Valid @RequestBody Produto produto, HttpServletResponse response) {
@@ -60,6 +66,7 @@ public class ProdutoResource {
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Transactional
 	public void deletarProduto(@PathVariable String id){
 		composicaoRepository.deleteByprodutoParte_codigo(id);
 		produtoRepository.deleteById(id);
@@ -67,6 +74,7 @@ public class ProdutoResource {
 	
 	@DeleteMapping("/all")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@Transactional
 	public void DeletarLoteProdutos(@RequestBody List<String> produtos) {
 		int i = 0;
 		while((produtos.get(i) != null)&&(produtos.get(i) != "")) {	
@@ -78,13 +86,16 @@ public class ProdutoResource {
 		
 	}
 	
-	@PutMapping("/{id}")
 	@SuppressWarnings("unlikely-arg-type")
+	@PutMapping("/{id}")
+	@Transactional
 	public ResponseEntity<Produto> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
-
-		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		System.out.println("\n AAAAAAAAAAAAAAA " + CompararBD(produto) + "\n ");
+		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+	
+		else if (CompararBD(produto) == 0) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		
-		else{
+		else if (CompararBD(produto) == 1){
 			return produtoRepository.findById(id)
 		           .map(record -> {
 		               record.setDescricao(produto.getDescricao());
@@ -97,6 +108,28 @@ public class ProdutoResource {
 		               return ResponseEntity.ok().body(updated);
 		           }).orElse(ResponseEntity.notFound().build());
 		}
+		return null;
+	}
+	
+	
+	public int CompararBD(Produto produto) {
+		int i;
+		int j;
+		List<Produto> x = produtoRepository.findByComposicao_ProdutoParte_codigo(produto.getCodigo());
+		for(i = 0; i < x.size(); i++) {
+			for(j = 0; j < produto.getComposicao().size(); j++) {
+				System.out.println("\n ENTREI AQUII \n");
+				if ((x.get(i).getCodigo().equals(produto.getComposicao().get(j).getProdutoParte().getCodigo()) ==  true) ||(x.get(i).getCodigo() == produto.getComposicao().get(j).getProdutoParte().getCodigo())) {
+					System.out.println("\n ENTREI AQUII 2222\n");
+					return 0;
+				}
+				if((produto.getComposicao().get(j).getProdutoParte().getCodigo().equalsIgnoreCase(x.get(i).getCodigo()) ==  true) ||( produto.getComposicao().get(j).getProdutoParte().getCodigo() == x.get(i).getCodigo() )) {
+					System.out.println("\n ENTREI AQUII 3333\n");
+					return 0;
+				}
+			}
+		}
+		return 1;
 	}
 	
 	@PutMapping("/{id}/{quantidadeAtual}")

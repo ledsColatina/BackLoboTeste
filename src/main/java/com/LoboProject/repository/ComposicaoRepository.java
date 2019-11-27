@@ -12,4 +12,5 @@ public interface ComposicaoRepository extends JpaRepository<Composicao, Long>{
 	Object findAllByProdutoParte_codigo(String string);
 	
 	public List<ResumoComposicao> resumir();
+	
 }
