@@ -72,7 +72,7 @@ public class ProdutoResource {
 		produtoRepository.deleteById(id);
 	}
 	
-	@DeleteMapping("/all")
+	@DeleteMapping("/all") 
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@Transactional
 	public void DeletarLoteProdutos(@RequestBody List<String> produtos) {
@@ -115,17 +115,22 @@ public class ProdutoResource {
 	public int CompararBD(Produto produto, String id) {
 		int i;
 		int j;
+		int k;
 		List<Produto> x = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
 		for(i = 0; i < x.size(); i++) {
 			for(j = 0; j < produto.getComposicao().size(); j++) {
 	
 				if ((x.get(i).getCodigo().equals(produto.getComposicao().get(j).getProdutoParte().getCodigo()) ==  true) ||(x.get(i).getCodigo() == produto.getComposicao().get(j).getProdutoParte().getCodigo())) {
-					System.out.println("\n ENTREI AQUII 2222\n");
 					return 0;
 				}
 				if((produto.getComposicao().get(j).getProdutoParte().getCodigo().equalsIgnoreCase(x.get(i).getCodigo()) ==  true) ||( produto.getComposicao().get(j).getProdutoParte().getCodigo() == x.get(i).getCodigo() )) {
-					System.out.println("\n ENTREI AQUII 3333\n");
 					return 0;
+				}
+				
+				for(k = 0; k < x.get(i).getComposicao().size(); k++) {
+					if((x.get(i).getComposicao().get(k).getCodigo().equals(produto.getComposicao().get(j).getProdutoParte().getCodigo()) ==  true) ||(x.get(i).getComposicao().get(k).getProdutoParte().getCodigo() == produto.getComposicao().get(j).getProdutoParte().getCodigo())) {
+						return 0;
+					}
 				}
 			}
 		}
