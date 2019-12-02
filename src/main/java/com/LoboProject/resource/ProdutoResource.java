@@ -9,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.LoboProject.Projection.ResumoProduto;
+import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
@@ -90,12 +91,11 @@ public class ProdutoResource {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<Produto> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
-		System.out.println("\n AAAAAAAAAAAAAAA " + CompararBD(produto, id) + "\n ");
 		if(produto.getComposicao().contains(produtoRepository.findById(id))) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 	
-		else if (CompararBD(produto, id) == 0) return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		else if (ProcurarBugs(produto,produto.getComposicao(), id , 0)  == -1) return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		
-		else if (CompararBD(produto, id) == 1){
+		else if (ProcurarBugs(produto, produto.getComposicao(),id , 0) != -1){
 			return produtoRepository.findById(id)
 		           .map(record -> {
 		               record.setDescricao(produto.getDescricao());
@@ -135,6 +135,27 @@ public class ProdutoResource {
 			}
 		}
 		return 1;
+	}
+	
+	public int ProcurarBugs(Produto produto,List<Composicao> lista, String id, int a) {
+		List<Composicao> compInic = lista;
+		List<Produto> x = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
+		int i, j;
+		if (a == -1) return -1;
+		if((x == null)||(x.isEmpty())) return 0;
+		
+		for(i = 0; i < x.size(); i++) {
+			for(j = 0; j < produto.getComposicao().size(); j++) {
+	
+				if ((x.contains(compInic.get(j).getProdutoParte()) ==  true)) {
+					a = -1;
+					return -1;
+				}
+			}
+		}
+		
+		ProcurarBugs(x.get(a), lista, x.get(a).getCodigo(), a++);
+		return -1;
 	}
 	
 	@PutMapping("/{id}/{quantidadeAtual}")
