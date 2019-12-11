@@ -28,7 +28,7 @@ public class MyFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200", "https://lobo-front.herokuapp.com");
+		response.setHeader("Access-Control-Allow-Origin", "https://lobo-front.herokuapp.com");
         response.setHeader("Access-Control-Allow-Credentials", "true");
 		
 		if ("OPTIONS".equals(request.getMethod())) {
