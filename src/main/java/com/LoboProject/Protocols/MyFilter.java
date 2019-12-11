@@ -1,41 +1,54 @@
 package com.LoboProject.Protocols;
 
+
 import java.io.IOException;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class MyFilter extends OncePerRequestFilter {
-	
-	/*@Autowired
-	private loboApiProperty loboApiproperty;*/
+public class MyFilter implements Filter {
+
+//	private String originPermitida = "*"; // TODO: Configurar_para_diferentes_ambientes
 	
 	@Override
-	public void destroy() {
-	
+	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+			throws IOException, ServletException {
+		
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) resp;
+		
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+		
+		if ("OPTIONS".equals(request.getMethod())) {
+			response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
+        	response.setHeader("Access-Control-Allow-Headers", "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+        	response.setHeader("Access-Control-Max-Age", "3600");
+			
+			response.setStatus(HttpServletResponse.SC_OK);
+		} else {
+			chain.doFilter(req, resp);
+		}
+		
 	}
 	
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-	        throws ServletException, IOException {
-	
-	    //final String origin = "http://localhost:3000";
-	
-	    response.addHeader("Access-Control-Allow-Origin", "*");
-	    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-	    response.setHeader("Access-Control-Allow-Credentials", "true");
-	    response.setHeader("Access-Control-Allow-Headers",
-	            "content-type, x-gwt-module-base, x-gwt-permutation, clientid, longpush");
-	
-	    filterChain.doFilter(request, response);
+	public void destroy() {
+	}
+
+	@Override
+	public void init(FilterConfig arg0) throws ServletException {
 	}
 
 }

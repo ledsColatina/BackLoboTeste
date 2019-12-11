@@ -3,8 +3,11 @@ package com.LoboProject.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,10 +17,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
+import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
 
+@Configuration
 @EnableWebSecurity
 @EnableResourceServer
-@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAdapter {
 
     
@@ -27,9 +32,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
     @Autowired
     public void globalUserDetails(final AuthenticationManagerBuilder auth) throws Exception {
 		
-		/*auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder.encode("admin")).roles("USER");
-        auth.inMemoryAuthentication().withUser("producao").password(passwordEncoder.encode("admin")).roles("USER");
-        auth.inMemoryAuthentication().withUser("flavio").password(passwordEncoder.encode("admin")).roles("USER");*/
+		/*auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder.encode("admin")).roles("USER");*/
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -41,9 +44,8 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/*").permitAll()
-        .antMatchers("/*/*").permitAll()
-        .antMatchers("/*/*/*").permitAll()
+        http.authorizeRequests().antMatchers("/users").permitAll()//.antMatchers("/setores").permitAll()
+        .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
         .anyRequest().authenticated()
         .and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
@@ -51,14 +53,17 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        //web.ignoring().antMatchers("/actuator/**");
-    	web.ignoring().antMatchers("/*");
-        web.ignoring().antMatchers("/*/*");
-        web.ignoring().antMatchers("/*/*/*");
+        web.ignoring().antMatchers("/actuator/**");
+        web.ignoring().antMatchers("/users");
     }
     
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
 
+	public MethodSecurityExpressionHandler createExpressionHandler() {
+		return new OAuth2MethodSecurityExpressionHandler();
+	}
+	
 }

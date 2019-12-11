@@ -1,0 +1,38 @@
+{
+  "groups": [
+    {
+      "name": "lobo",
+      "type": "com.LoboProject.config.property.loboApiProperty",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty"
+    },
+    {
+      "name": "lobo.seguranca",
+      "type": "com.LoboProject.config.property.loboApiProperty$Seguranca",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty",
+      "sourceMethod": "public com.LoboProject.config.property.loboApiProperty.Seguranca getSeguranca() "
+    }
+  ],
+  "properties": [
+    {
+      "name": "lobo.origin-permitida",
+      "type": "java.lang.String",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty"
+    },
+    {
+      "name": "lobo.seguranca.enable-https",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
+    },
+    {
+      "name": "lobo.seguranca.enable-https",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
+    },
+    {
+      "name": "lobo.seguranca.enable-https",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
+    }
+  ],
+  "hints": []
+}

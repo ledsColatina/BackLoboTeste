@@ -1,6 +1,5 @@
 package com.LoboProject.resource;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.LoboProject.domain.Setor;
 import com.LoboProject.repository.SetorRepository;
+import com.LoboProject.service.SetorService;
 
 
 @RestController
@@ -30,48 +29,53 @@ public class SetorResource {
 	@Autowired
 	private SetorRepository setorRepository;
 	
+	@Autowired
+	private SetorService setorService;
+	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_LISTARSETOR')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> listarSetor(){
 		List<Setor> setor = setorRepository.findAll();
 		return !setor.isEmpty() ? ResponseEntity.ok(setor) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> BuscarId(@PathVariable Long id){
-		Optional<Setor> x = setorRepository.findById(id);	
-		return x.isPresent() ? ResponseEntity.ok(x) : ResponseEntity.notFound().build() ;
+		Optional<Setor> setor = setorRepository.findById(id);	
+		return setor.isPresent() ? ResponseEntity.ok(setor) : ResponseEntity.notFound().build() ;
 	}
 	
 	
 	@PostMapping()
-	//@PreAuthorize("hasAuthority('ROLE_CRIARSETOR')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Setor> CriarSetor(@Valid @RequestBody Setor setor, HttpServletResponse response) {
-		Setor setorSalvo = setorRepository.save(setor);
-		
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-				.buildAndExpand(setorSalvo.getId()).toUri();
-		response.setHeader("Location", uri.toASCIIString());
-		
-		return ResponseEntity.created(uri).body(setorSalvo);
+		Setor setorSalvo = setorRepository.save(setor);	
+		return ResponseEntity.ok().body(setorSalvo);
 	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public void DeletarSetor(@PathVariable Long id) {
 		setorRepository.deleteById(id);
 	}
 	
 	
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Setor> atualizarSetor(@PathVariable Long id, @Valid @RequestBody Setor setor){
-		return setorRepository.findById(id)
+		/*return setorRepository.findById(id)
 		           .map(record -> {
 		               record.setDescricao(setor.getDescricao());
 		               record.setBase(setor.isBase());
 		               Setor updated = setorRepository.save(record);
 		               return ResponseEntity.ok().body(updated);
-		           }).orElse(ResponseEntity.notFound().build());
+		           }).orElse(ResponseEntity.notFound().build());*/
+		Setor setorup = setorService.atualizar(id, setor);
+		if(setorup != null) return ResponseEntity.ok().body(setorup);
+		else return ResponseEntity.noContent().build();
+		
 	}
 	
 }

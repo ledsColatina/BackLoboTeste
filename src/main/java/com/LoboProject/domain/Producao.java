@@ -15,7 +15,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Producao {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	
 	@NotNull

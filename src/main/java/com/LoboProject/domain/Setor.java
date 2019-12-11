@@ -43,6 +43,6 @@ public class Setor {
 	public void setBase(boolean base) {
 		this.base = base;
 	}
-	
+
 
 }

@@ -1,4 +1,4 @@
-package com.LoboProject;
+package com.LoboProject.test;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

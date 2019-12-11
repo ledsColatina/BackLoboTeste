@@ -93,4 +93,8 @@ public class Produto {
 		this.quantidadeMax = quantidadeMax;
 	}
 
+
+
+
+
 }
