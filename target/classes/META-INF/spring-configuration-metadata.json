@@ -22,16 +22,6 @@
       "name": "lobo.seguranca.enable-https",
       "type": "java.lang.Boolean",
       "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
-    },
-    {
-      "name": "lobo.seguranca.enable-https",
-      "type": "java.lang.Boolean",
-      "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
-    },
-    {
-      "name": "lobo.seguranca.enable-https",
-      "type": "java.lang.Boolean",
-      "sourceType": "com.LoboProject.config.property.loboApiProperty$Seguranca"
     }
   ],
   "hints": []
