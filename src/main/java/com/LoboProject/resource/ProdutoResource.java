@@ -31,35 +31,30 @@ public class ProdutoResource {
 	
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<Produto>> listarProduto(){
 		List<Produto> produto = produtoRepository.findAll();
 		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/resumo")
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<ResumoProduto>> resumir(){
 		List<ResumoProduto> produto = produtoRepository.resumir();
 		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> buscarProdutoId(@PathVariable String id){
 		Optional<Produto> produto = produtoRepository.findById(id);
 		return produto.isPresent() ? ResponseEntity.ok(produto) : ResponseEntity.notFound().build() ;
 	}
 	
 	@GetMapping("/setor/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<Produto>> buscarProdutoPorSetor(@PathVariable Long id){
 		List<Produto> produtos = produtoRepository.findBySetor_id(id);
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/comp/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<Produto>> buscarProdutoPorcomp(@PathVariable String id){
 		List<Produto> produtos = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();

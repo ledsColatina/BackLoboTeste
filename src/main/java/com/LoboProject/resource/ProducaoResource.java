@@ -28,29 +28,27 @@ public class ProducaoResource {
 	private ProducaoService producaoService;
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<List<Producao>> listarSetor(){
+	public ResponseEntity<List<Producao>> listarProducao(){
 		List<Producao> producao = producaoRepository.findAllByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/top50")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<List<Producao>> listarSetor2(){
+	public ResponseEntity<List<Producao>> listar50Producoes(){
 		List<Producao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
 	
 	@PostMapping()
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('USER')")
 	public  ResponseEntity<?> criarProducao(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		return producaoService.criarProducao(producao);
 	}
 	
 	
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<?> deletarProducao(@PathVariable Long id){
 		return producaoService.deletarProducao(id);
 	}

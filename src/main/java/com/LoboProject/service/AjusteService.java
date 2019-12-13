@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import com.LoboProject.domain.Ajuste;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.SimpleEnumStat;
+import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.AjusteRepository;
 import com.LoboProject.repository.ProdutoRepository;
+import com.LoboProject.repository.UsuarioRepository;
 
 @Service
 public class AjusteService {
@@ -20,6 +22,9 @@ public class AjusteService {
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private UsuarioRepository userRepository;
 	
 	public ResponseEntity<?> deletarAjuste(Long id){
 		Optional<Ajuste> ajuste = ajusteRepository.findById(id);
@@ -45,6 +50,9 @@ public class AjusteService {
 		else if(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "DECREMENTO") produto.get().setQuantidadeAtual(produto.get().getQuantidadeAtual() - ajuste.getQuantidade());
 		else if(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "AJUSTE") produto.get().setQuantidadeAtual(ajuste.getQuantidade());;
 		ajuste.setProduto(produto.get());
+		
+		Optional<Usuario> nome = userRepository.findByUsername(ajuste.getNome());
+		if(nome.isPresent() == true )ajuste.setNome(nome.get().getNome());
 		
 		produtoRepository.save(produto.get());
 		Ajuste producaoSalva = ajusteRepository.save(ajuste);

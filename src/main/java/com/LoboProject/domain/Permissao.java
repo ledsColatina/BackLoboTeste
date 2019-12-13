@@ -20,8 +20,8 @@ public class Permissao {
 		return codigo;
 	}
 	
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
+	public void setCodigo(Long i) {
+		this.codigo = i;
 	}
 	
 	public String getDescricao() {

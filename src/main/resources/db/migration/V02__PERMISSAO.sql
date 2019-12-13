@@ -4,3 +4,4 @@ CREATE TABLE permissao(
 );
 
 insert into permissao (codigo, descricao) values (1, 'ADMIN');
+insert into permissao (codigo, descricao) values (2, 'USER');

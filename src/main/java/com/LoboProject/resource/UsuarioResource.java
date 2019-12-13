@@ -43,6 +43,7 @@ public class UsuarioResource {
 		Optional<Usuario> user = usuarioRepository.findByUsername(username);
 		return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build() ;
 	}
+
 	
 	@PostMapping()
 	//@PreAuthorize("hasAuthority('ADMIN')")

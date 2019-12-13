@@ -33,14 +33,12 @@ public class SetorResource {
 	private SetorService setorService;
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> listarSetor(){
 		List<Setor> setor = setorRepository.findAll();
 		return !setor.isEmpty() ? ResponseEntity.ok(setor) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> BuscarId(@PathVariable Long id){
 		Optional<Setor> setor = setorRepository.findById(id);	
 		return setor.isPresent() ? ResponseEntity.ok(setor) : ResponseEntity.notFound().build() ;

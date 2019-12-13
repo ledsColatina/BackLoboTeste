@@ -7,3 +7,4 @@ CREATE TABLE usuario_permissao(
 );
 
 insert into usuario_permissao(usuario_codigo, permissao_codigo) values (1, 1);
+insert into usuario_permissao(usuario_codigo, permissao_codigo) values (1, 2);

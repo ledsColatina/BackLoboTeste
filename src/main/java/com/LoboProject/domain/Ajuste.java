@@ -35,6 +35,8 @@ public class Ajuste {
 	@ManyToOne
 	@JoinColumn(name = "id_produto")
 	private Produto produto;
+	
+	private String nome;
 
 	public Long getCodigo() {
 		return codigo;
@@ -82,6 +84,14 @@ public class Ajuste {
 
 	public void setData(Date data) {
 		this.data = data;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	
 	
