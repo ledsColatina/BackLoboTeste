@@ -63,13 +63,6 @@ public class SetorResource {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Setor> atualizarSetor(@PathVariable Long id, @Valid @RequestBody Setor setor){
-		/*return setorRepository.findById(id)
-		           .map(record -> {
-		               record.setDescricao(setor.getDescricao());
-		               record.setBase(setor.isBase());
-		               Setor updated = setorRepository.save(record);
-		               return ResponseEntity.ok().body(updated);
-		           }).orElse(ResponseEntity.notFound().build());*/
 		Setor setorup = setorService.atualizar(id, setor);
 		if(setorup != null) return ResponseEntity.ok().body(setorup);
 		else return ResponseEntity.noContent().build();

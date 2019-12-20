@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 
+
 @Entity
 public class Produto {
 	
@@ -36,6 +37,8 @@ public class Produto {
 	@JoinColumn(name="id_produto_todo")
 	private List<Composicao> composicao;
 	
+	 @OneToMany(mappedBy = "produto")
+	 List<PedidoProduto> produtos;
 	
 	public Long getQuantidadeAtual() {
 		return quantidadeAtual;
@@ -93,7 +96,15 @@ public class Produto {
 		this.quantidadeMax = quantidadeMax;
 	}
 
+	public List<PedidoProduto> getProdutos() {
+		return produtos;
+	}
 
+	public void setProdutos(List<PedidoProduto> produtos) {
+		this.produtos = produtos;
+	}
+
+	
 
 
 

@@ -1,20 +1,22 @@
 package com.LoboProject.domain;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.LoboProject.domain.SimpleEnum.Status;
 
 
 @Entity
-public class Pedido {
+public class Pedido{
 	
 	@Id
-	private Long numero;
+	private Long codigo;
 	
-	@NotNull
+	
 	private Long prioridade;
 	
 	@NotNull
@@ -23,10 +25,11 @@ public class Pedido {
 	@NotNull
 	private String endereco;
 	
-	@NotNull
 	private Status status;
 	
 	private String nmrNota;
+	
+	private String dataChegada;
 	
 	@DateTimeFormat(pattern = "dd/MM/yyyy ")
 	private Date dataEmbalagem;
@@ -34,15 +37,22 @@ public class Pedido {
 	@DateTimeFormat(pattern = "dd/MM/yyyy ")
 	private Date dataExpedicao;
 	
-	//Produto
-
-
-	public Long getNumero() {
-		return numero;
+	@OneToMany(mappedBy = "pedido")
+	List<PedidoProduto> itens;
+	
+	private String transportadora;
+	
+	private String vendedor;
+	
+	private String condicoes;
+	
+	
+	public Long getCodigo() {
+		return codigo;
 	}
 
-	public void setNumero(Long numero) {
-		this.numero = numero;
+	public void setCodigo(Long codigo) {
+		this.codigo = codigo;
 	}
 
 	public Long getPrioridade() {
@@ -100,6 +110,51 @@ public class Pedido {
 	public void setDataExpedicao(Date dataExpedicao) {
 		this.dataExpedicao = dataExpedicao;
 	}
+
+
+	public String getDataChegada() {
+		return dataChegada;
+	}
+
+	public void setDataChegada(String dataChegada) {
+		this.dataChegada = dataChegada;
+	}
+
+	
+
+	public List<PedidoProduto> getItens() {
+		return itens;
+	}
+
+	public void setItens(List<PedidoProduto> itens) {
+		this.itens = itens;
+	}
+
+	public String getTransportadora() {
+		return transportadora;
+	}
+
+	public void setTransportadora(String transportadora) {
+		this.transportadora = transportadora;
+	}
+
+	public String getVendedor() {
+		return vendedor;
+	}
+
+	public void setVendedor(String vendedor) {
+		this.vendedor = vendedor;
+	}
+
+	public String getCondicoes() {
+		return condicoes;
+	}
+
+	public void setCondicoes(String condicoes) {
+		this.condicoes = condicoes;
+	}
+
+	
 	
 	
 }

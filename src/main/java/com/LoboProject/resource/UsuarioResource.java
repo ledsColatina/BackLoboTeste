@@ -2,7 +2,9 @@ package com.LoboProject.resource;
 
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
+
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.UsuarioService;
+
 
 @RestController
 @RequestMapping("/users")
@@ -46,21 +49,28 @@ public class UsuarioResource {
 
 	
 	@PostMapping()
-	//@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Usuario> CriarUsuario(@RequestBody Usuario user) {
 		return usuarioService.CriarUsuario(user);
 	}
 	
 	@DeleteMapping("/{username}")
 	@PreAuthorize("hasAuthority('ADMIN')")
+	@Transactional
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarUsuario(@PathVariable String username){
-		usuarioRepository.deleteByUsername(username);
+		Optional<Usuario> usua = usuarioRepository.findByUsername(username);
+		if(usua.isPresent() == true) {
+			usua.get().setSetores(null);
+			usua.get().setPermissoes(null);
+			usuarioService.atualizarUsuario2(username, usua.get());
+			usuarioRepository.deleteById(usua.get().getCodigo());
+		}
 	}
 	
 	@PutMapping("/{username}")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Usuario> atualizarUsuario(@PathVariable String username, @Valid @RequestBody Usuario user){
+	public ResponseEntity<Usuario> atualizarUsuario(@PathVariable String username, @RequestBody Usuario user){
 		return usuarioService.atualizarUsuario(username, user);
 	}
 	

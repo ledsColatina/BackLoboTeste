@@ -2,6 +2,7 @@ package com.LoboProject.domain;
 
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 
-
 @Entity
 @Table(name="usuario")
 public class Usuario {
@@ -24,9 +24,10 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	
-
+	@Column(unique=true)
 	private String username;
 	
+	@Column(unique=true)
 	private String nome;
 	
 	@Length(max=65) 
@@ -50,7 +51,6 @@ public class Usuario {
 	
 
 	
-
 	public List<Setor> getSetores() {
 		return setores;
 	}
@@ -83,8 +83,6 @@ public class Usuario {
 		this.permissoes = permissoes;
 	}
 	
-	
-
 	public String getUsername() {
 		return username;
 	}

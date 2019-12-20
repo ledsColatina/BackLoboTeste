@@ -1,5 +1,6 @@
 package com.LoboProject.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
@@ -11,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
+import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
+import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.ProdutoService;
 
 
@@ -28,6 +31,9 @@ public class ProdutoResource {
 	
 	@Autowired
 	private ProdutoService produtoService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	
 	@GetMapping
@@ -54,11 +60,32 @@ public class ProdutoResource {
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/user/{username}")
+	public ResponseEntity<List<Produto>> buscarporUser(@PathVariable String username){
+		Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
+		List<Produto> list = new ArrayList<>();
+		int i;
+		if(usuario.isPresent() == false) return null;
+		else {
+			for(i = 0; i < usuario.get().getSetores().size(); i++) {
+				list.addAll( produtoRepository.findBySetor_id(usuario.get().getSetores().get(i).getId()));
+			}
+			if(usuario.get().isTipo() == true) {
+				list = produtoRepository.findAll();
+				return !list.isEmpty() ? ResponseEntity.ok(list) : ResponseEntity.noContent().build();
+			}
+			
+		}
+		return !list.isEmpty() ? ResponseEntity.ok(list) : ResponseEntity.noContent().build();
+	}
+	
+	
 	@GetMapping("/comp/{id}")
 	public ResponseEntity<List<Produto>> buscarProdutoPorcomp(@PathVariable String id){
 		List<Produto> produtos = produtoRepository.findByComposicao_ProdutoParte_codigo(id);
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
 	}
+	
 	
 	@PostMapping()
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -67,6 +94,7 @@ public class ProdutoResource {
 		produtoRepository.save(produto);
 		return ResponseEntity.status(HttpStatus.OK).body(produto);
 	}
+	
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

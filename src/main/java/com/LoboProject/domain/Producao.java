@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Entity
-public class Producao {
+public class Producao{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,8 @@ public class Producao {
 	
 	@DateTimeFormat(pattern = "dd/MM/yyyy ")
 	private Date data;
+	
+	private String nome;
 	
 
 	public Long getQuantidade() {
@@ -59,6 +61,14 @@ public class Producao {
 
 	public void setData(Date data) {
 		this.data = data;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 	
 	

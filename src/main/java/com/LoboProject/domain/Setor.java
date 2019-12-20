@@ -1,7 +1,6 @@
 package com.LoboProject.domain;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 
@@ -12,7 +11,6 @@ public class Setor {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotEmpty(message = "Descricao Deverá ser informada")
 	@NotNull(message = "Descricao Deverá ser informada")
 	private String descricao;
 	

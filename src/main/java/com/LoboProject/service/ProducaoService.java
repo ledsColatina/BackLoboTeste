@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.LoboProject.domain.Producao;
 import com.LoboProject.domain.Produto;
+import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.repository.RegistrarProducaoRepository;
+import com.LoboProject.repository.UsuarioRepository;
 
 @Service
 public class ProducaoService {
@@ -18,6 +20,9 @@ public class ProducaoService {
 	
 	@Autowired
 	private RegistrarProducaoRepository producaoRepository;
+	
+	@Autowired
+	private UsuarioRepository userRepository;
 	
 	
 	public ResponseEntity<?> deletarProducao(Long id){
@@ -77,6 +82,8 @@ public class ProducaoService {
 		}
 			produtoRepository.save(produto.get());
 			// Salvando_producao
+			Optional<Usuario> nome = userRepository.findByUsername(producao.getNome());
+			if(nome.isPresent() == true )producao.setNome(nome.get().getNome());
 			Producao producaoSalva = producaoRepository.save(producao);
 			return ResponseEntity.status(HttpStatus.OK).body(producaoSalva);
 		}

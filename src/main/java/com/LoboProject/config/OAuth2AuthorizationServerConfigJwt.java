@@ -32,7 +32,7 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
         	.secret(passwordEncoder().encode("@ngul@r0"))
         	.scopes("read", "write")
 	        .authorizedGrantTypes("password", "refresh_token")
-	        .accessTokenValiditySeconds(1800)
+	        .accessTokenValiditySeconds(43200)
 	        .refreshTokenValiditySeconds(3600 * 24)
         .and()
 			.withClient("mobile")  

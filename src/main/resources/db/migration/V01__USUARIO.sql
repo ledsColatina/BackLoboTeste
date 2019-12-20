@@ -6,4 +6,4 @@ CREATE TABLE usuario(
      username VARCHAR(50) NOT NULL
   );
 
-insert into usuario (codigo, nome, senha, tipo, username) values (1,'admin', '$2a$10$BENPJuJZZGBJPwcqegyWcebaqdLLsPRhKXLBCxVybZBuRXEUPD2Z2', false, 'admin');
+insert into usuario (codigo, nome, senha, tipo, username) values (1,'admin', '$2a$10$BENPJuJZZGBJPwcqegyWcebaqdLLsPRhKXLBCxVybZBuRXEUPD2Z2', true, 'admin');
