@@ -2,7 +2,6 @@ package com.LoboProject.resource;
 
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Pedido;
-import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.service.PedidoService;
 
 
 @RestController
-@RequestMapping("/pedido")
+@RequestMapping("/pedidos")
 public class PedidoResource {
 
 	@Autowired
@@ -31,21 +29,20 @@ public class PedidoResource {
 	@Autowired
 	private PedidoService pedidoService;
 	
-	@Autowired
-	private PedidoProdutoRepository pedidoProduto;
 	
-	@GetMapping()
-	public ResponseEntity<?> BuscarPedido(){
-		List<Pedido> x = pedidorepository.findAll();	
-		return !x.isEmpty() ? ResponseEntity.ok(x) : ResponseEntity.noContent().build();
+	@GetMapping("/{tipo}")
+	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
+		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/ler")
-	public void ler() {
-		pedidoService.lerXML();
+	@GetMapping("/listar")
+	public ResponseEntity<List<Pedido>> listarTudo() {
+		List<Pedido> lista = pedidorepository.findAll();	
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/id/{id}")
 	public ResponseEntity<?> BuscarId(@PathVariable Long id){
 		Optional<Pedido> x = pedidorepository.findById(id);	
 		return x.isPresent() ? ResponseEntity.ok(x) : ResponseEntity.notFound().build() ;
@@ -53,13 +50,28 @@ public class PedidoResource {
 	
 	
 	@PostMapping()
-	public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido, HttpServletResponse response) {
-		int i = 0;
-		for(i = 0; i < pedido.getItens().size(); i++)pedidoProduto.save((pedido.getItens().get(i)));
+	public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
 		Pedido pedidoSalvo = pedidorepository.save(pedido);
 		return ResponseEntity.ok().body(pedidoSalvo);
 	}
 	
+	@PostMapping("/fila")
+	@Transactional
+	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
+		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.criarFila(pedidos)));
+	}
+	
+	@PostMapping("/Nota")
+	@Transactional
+	public ResponseEntity<List<Pedido>> gerarNotaFiscal (@RequestBody List<Pedido> pedidos){
+		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.gerarNota(pedidos)));
+	}
+	
+	@PostMapping("/Expedicao")
+	@Transactional
+	public ResponseEntity<List<Pedido>> gerarExpedicao (@RequestBody List<Pedido> pedidos){
+		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.expedir(pedidos)));
+	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

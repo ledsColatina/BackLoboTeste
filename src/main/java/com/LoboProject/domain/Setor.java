@@ -3,7 +3,6 @@ package com.LoboProject.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-
 @Entity
 public class Setor {
 	

@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import com.LoboProject.domain.SimpleEnum.Tipo;
 
@@ -93,7 +92,6 @@ public class Ajuste {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
 	
 	
 	

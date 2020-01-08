@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -37,8 +37,9 @@ public class Produto {
 	@JoinColumn(name="id_produto_todo")
 	private List<Composicao> composicao;
 	
-	 @OneToMany(mappedBy = "produto")
-	 List<PedidoProduto> produtos;
+	@OneToMany(mappedBy = "produto")
+	@JsonIgnore
+	List<PedidoProduto> produtos;
 	
 	public Long getQuantidadeAtual() {
 		return quantidadeAtual;

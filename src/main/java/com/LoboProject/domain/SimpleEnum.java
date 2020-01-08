@@ -7,6 +7,6 @@ public class SimpleEnum {
 	}
 	
 	public enum Status{
-		EM_PRODUCAO,EMBALADO,NOTA_EMITIDA, DESPACHADO;
+		FILA,EM_PRODUCAO,EMBALADO,NOTA_EMITIDA, DESPACHADO;
 	}
 }

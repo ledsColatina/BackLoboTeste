@@ -1,86 +1,66 @@
 package com.LoboProject.service;
 
-import java.io.IOException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Node;
-
+import com.LoboProject.domain.Pedido;
+import com.LoboProject.domain.SimpleEnum;
+import com.LoboProject.repository.PedidoRepository;
 
 @Service
 public class PedidoService {
 
-	//@Autowired
-	//private PedidoRepository pedidoRepository;
-	
-	public void lerXML() {
-		
-		//Pedido pedido = new Pedido();
-		
-		try {
+	@Autowired
+	private PedidoRepository pedidorepository;
 			
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.parse("C://Users/Sandro/Desktop/Pedido_0013251.xml");
-			
-			NodeList listaDePessoas = doc.getElementsByTagName("Inf");
-            int tamanhoLista = listaDePessoas.getLength();
-            
-            for (int i = 0; i < tamanhoLista; i++) {
-                
-                // pego_cada_item_pessoa_como_um_nó_(node)
-                Node noPessoa = listaDePessoas.item(i);
-                // Verifica_se o noPessoa é do tipo element (e não do tipo texto etc)
-                if(noPessoa.getNodeType() == Node.ELEMENT_NODE){
-                    
-                    Element elementoPessoa = (Element) noPessoa;
-                 
-                    String numero = elementoPessoa.getAttribute("Codigo"); 
-                    //pedido.setNumero(Long.parseLong(elementoPessoa.getAttribute("Codigo")));
-                    // pedido.setDataExpedicao();
-                    // String Cliente = elementoPessoa.getAttribute("Cliente");
-                    // pedido.setNomeCliente(elementoPessoa.getAttribute("Cliente"));
-                    // pedido.setEndereco(elementoPessoa.getAttribute("Cidade")+elementoPessoa.getAttribute("Estado"));
-                    // System.out.println("\n numero: %s" + pedido.getNomeCliente());
-                    // imprimindo o id
-                    System.out.println("NUMERO = " + numero);   
-                 }
-            }
-            
-           // pedidoRepository.save(pedido);
-          /*  NodeList listaDeProdutos = doc.getElementsByTagName("Itens");
-            int lista = listaDeProdutos.getLength();
-            List<Produto> prod = new ArrayList();
-            
-            for (int i = 0; i < lista; i++) {
-                
-                // pego_cada_item_pessoa_como_um_nó_(node)
-                Node noProduto = listaDeProdutos.item(i);
-                // Verifica_se o noPessoa é do tipo element (e não do tipo texto etc)
-                if(noProduto.getNodeType() == Node.ELEMENT_NODE){
-                    
-                    Element elementoProduto = (Element) noProduto;
-                 
-                    prod.add(elementoProduto.getAttribute("codProd"))
-                    
-                 }
-            }*/
-            
-		} catch (SAXException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public List<Pedido> listarSeparadamente(String string){
+		if(string.equals("FILA")) {
+			return pedidorepository.findByStatus(SimpleEnum.Status.FILA);
+		}else if (string.equals("EM_PRODUCAO")) {
+			return pedidorepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
+		}else if (string.equals("EMBALADO")) {
+			return pedidorepository.findByStatus(SimpleEnum.Status.EMBALADO);
+		}else if (string.equals("NOTA_EMITIDA")) {
+			return pedidorepository.findByStatus(SimpleEnum.Status.NOTA_EMITIDA);
+		}else if (string.equals("DESPACHADO")) {
+			return pedidorepository.findByStatus(SimpleEnum.Status.DESPACHADO);
+		}else {
+			return null;
 		}
-			
+	}
 	
+	public List<Pedido> gerarNota (List<Pedido> pedidos){
+		for(int i = 0; i < pedidos.size(); i++) {
+			if(pedidos.get(i).getStatus().equals(SimpleEnum.Status.EM_PRODUCAO)) pedidos.get(i).setStatus(SimpleEnum.Status.NOTA_EMITIDA);
+		}
+		return pedidos;
+	}
 	
+	public List<Pedido> expedir (List<Pedido> pedidos){
+		for(int i = 0; i < pedidos.size(); i++) {
+			if(pedidos.get(i).getStatus().equals(SimpleEnum.Status.NOTA_EMITIDA)) pedidos.get(i).setStatus(SimpleEnum.Status.DESPACHADO);
+		}
+		return pedidos;
+	}
+	
+	public List<Pedido> criarFila (List<Pedido> pedidos){
+		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+		if(ultimo.isPresent() == true) {
+			for(int i = 0; i < pedidos.size(); i++) {
+				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+				if (ultimo.get().getPrioridade() == null) ultimo.get().setPrioridade((long) 1);
+				pedidos.get(i).setPrioridade(ultimo.get().getPrioridade() + 1 );
+				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
+			}
+			return pedidos;
+		}
+		else {
+			return null;
+		}
 		
 	}
+	
+		
+	
 }

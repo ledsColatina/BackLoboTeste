@@ -44,7 +44,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/pedido").permitAll()//.antMatchers("/setores").permitAll()
+        http.authorizeRequests().antMatchers("/pedidos").permitAll()//.antMatchers("/setores").permitAll()
         .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
         .anyRequest().authenticated()
         .and()
@@ -54,7 +54,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/actuator/**");
-        web.ignoring().antMatchers("/pedido");
+        web.ignoring().antMatchers("/pedidos");
     }
     
 	public PasswordEncoder passwordEncoder() {

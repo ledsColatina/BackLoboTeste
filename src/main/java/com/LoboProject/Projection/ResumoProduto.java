@@ -1,6 +1,5 @@
 package com.LoboProject.Projection;
 
-
 public class ResumoProduto {
 	
 	private String codigo;

@@ -27,7 +27,9 @@ public class SimpleEnumStat {
 			  return "DESPACHADO";
 		  } else if ( status == Status.NOTA_EMITIDA){
 			  return "NOTA EMITIDA";
-		  }else {
+		  }else if(status == Status.FILA) {
+	    	   return "FILA";
+	      }else {
 			  return null; 
 		  }
 	  }
