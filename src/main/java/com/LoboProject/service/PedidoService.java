@@ -100,7 +100,10 @@ public class PedidoService {
 	public long listarultimaprioridade() {
 		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 		System.out.println("\n\n oioioi\n");
-		if(ultimo.isPresent())return ultimo.get().getPrioridade();
+		if(ultimo.isPresent()) {
+			System.out.println("passei " + ultimo.get().getPrioridade());
+			return ultimo.get().getPrioridade();
+		}
 		else return 0;
 		
 	}
