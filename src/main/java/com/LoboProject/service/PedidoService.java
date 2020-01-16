@@ -90,7 +90,7 @@ public class PedidoService {
 			return pedidos;
 		}
 		else {
-			return null;
+			return pedidos;
 		}
 		
 	}
