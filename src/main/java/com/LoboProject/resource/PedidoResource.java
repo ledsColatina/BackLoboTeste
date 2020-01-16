@@ -79,8 +79,8 @@ public class PedidoResource {
 		//List<Pedido> x = 
 		//if (x.isEmpty()) ResponseEntity.badRequest().body("Fail");
 		//pedidorepository.saveAll(x);
-		return ResponseEntity.ok().body(pedidoService.listarultimaprioridade());
-		//return pedidoService.criarFila(pedidos) != null ? ResponseEntity.ok().body("aaa") :  ResponseEntity.badRequest().body("aaa");
+		//return ResponseEntity.ok().body(pedidoService.listarultimaprioridade());
+		return pedidoService.criarFila(pedidos) != null ? ResponseEntity.ok().body("aaa") :  ResponseEntity.badRequest().body("aaa");
 	}
 	
 	@PostMapping("/embalar")
