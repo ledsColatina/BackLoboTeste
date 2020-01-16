@@ -76,11 +76,11 @@ public class PedidoResource {
 	
 	@PostMapping("/fila")
 	@Transactional
-	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
+	public ResponseEntity<String> criarFila (@RequestBody List<Pedido> pedidos){
 		List<Pedido> x = pedidoService.criarFila(pedidos);
 		if (x.isEmpty()) ResponseEntity.badRequest().body("Fail");
-		pedidorepository.saveAll(x);
-		return ResponseEntity.ok().body(x);
+		//pedidorepository.saveAll(x);
+		return ResponseEntity.ok().body("aaa");
 	}
 	
 	@PostMapping("/embalar")
