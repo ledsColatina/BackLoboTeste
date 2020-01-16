@@ -76,23 +76,23 @@ public class PedidoService {
 	}
 	
 	public List<Pedido> criarFila (List<Pedido> pedidos){
-		//Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 		Long prioridade;
-		//if(ultimo.isPresent() == true) {
+		if(ultimo.isPresent() == true) {
 			for(int i = 0; i < pedidos.size(); i++) {
-				//if (ultimo.get().getPrioridade() == null) ultimo.get().setPrioridade((long) 1);
-				//ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
-				//prioridade = ultimo.get().getPrioridade() + 1;
-				//pedidos.get(i).setPrioridade(prioridade);
-				pedidos.get(i).setPrioridade((long)1);
+				if (ultimo.get().getPrioridade() == null) ultimo.get().setPrioridade((long) 1);
+				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+				prioridade = ultimo.get().getPrioridade() + 1;
+				pedidos.get(i).setPrioridade(prioridade);
+				//pedidos.get(i).setPrioridade((long)1);
 				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
 				pedidorepository.save(pedidos.get(i));
 			}
 			return pedidos;
-		//}
-		//else {
-		//	return pedidos;
-		//}
+		}
+		else {
+			return null;
+		}
 		
 	}
 	
