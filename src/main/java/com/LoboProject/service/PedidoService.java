@@ -82,12 +82,11 @@ public class PedidoService {
 		if(ultimo.isPresent()) {
 			for(i = 0; i < pedidos.size(); i++) {
 				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
-				if (!ultimo.isPresent()) ultimo.get().setPrioridade((long) 1);
+				//if (!ultimo.isPresent()) ultimo.get().setPrioridade((long) 1);
 				prioridade = ultimo.get().getPrioridade() + i;
 				pedidos.get(i).setPrioridade(prioridade);
 				//pedidos.get(i).setPrioridade((long)1);
 				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
-				pedidorepository.save(pedidos.get(i));
 			}
 			return pedidos;
 		}
