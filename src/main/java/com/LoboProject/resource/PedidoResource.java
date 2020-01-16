@@ -38,7 +38,8 @@ public class PedidoResource {
 	
 	
 	@GetMapping("/{tipo}")
-	@PreAuthorize("hasAuthority('USER')")
+//	@PreAuthorize("hasAuthority('USER')")
+//	@PreAuthorize("hasAuthority('EMBALAGEM') OR ('ADMIN')")
 	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
 		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
@@ -112,7 +113,7 @@ public class PedidoResource {
 	}
 	
 	@PostMapping("/embalar/{codigoPedido}")
-//	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+//	@PreAuthorize("hasAuthority('EMBALAGEM') OR ('ADMIN')")
 	@Transactional
 	public ResponseEntity<Pedido> trocarEstadoEmbalagem(@PathVariable long codigoPedido){
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
