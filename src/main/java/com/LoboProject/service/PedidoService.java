@@ -78,10 +78,11 @@ public class PedidoService {
 	public List<Pedido> criarFila (List<Pedido> pedidos){
 		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 		Long prioridade;
-		if(ultimo.isPresent() == true) {
-			for(int i = 0; i < pedidos.size(); i++) {
+		int i = 0;
+		if(ultimo.isPresent()) {
+			for(i = 0; i < pedidos.size(); i++) {
 				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
-				//if (ultimo.get().getPrioridade() == null) ultimo.get().setPrioridade((long) 1);
+				if (!ultimo.isPresent()) ultimo.get().setPrioridade((long) 1);
 				prioridade = ultimo.get().getPrioridade() + 1;
 				pedidos.get(i).setPrioridade(prioridade+1);
 				//pedidos.get(i).setPrioridade((long)1);
@@ -91,7 +92,7 @@ public class PedidoService {
 			return pedidos;
 		}
 		else {
-			return null;
+			return pedidos;
 		}
 		
 	}
