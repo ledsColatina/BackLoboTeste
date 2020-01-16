@@ -15,6 +15,8 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long>{
 //	Optional<Pedido> findByStatusTop1ByOrderByPrioridadeDesc(Status emProducao);
 
 	List<Pedido> findByStatus(Status fila);
+
+	Optional<Pedido> findTop1ByOrderByPrioridadeAsc();
 	
 	//List<Pedido> findByPedido_StatusOrderByPrioridadeAsc();
 }
