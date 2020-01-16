@@ -123,7 +123,7 @@ public class PedidoResource {
 	
 	
 	@DeleteMapping("/{codigo}")
-	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@PreAuthorize("hasAuthority ('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarPedido(@PathVariable Long codigo){
 		pedidoService.deletar(codigo);
