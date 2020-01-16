@@ -39,7 +39,7 @@ public class UsuarioResource {
 	}
 	
 	@GetMapping("/{username}")
-	@PreAuthorize("hasAuthority('ADMIN')")
+	//@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> BuscarUsername(@PathVariable String username){
 		Optional<Usuario> user = usuarioRepository.findByUsername(username);
 		return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build() ;

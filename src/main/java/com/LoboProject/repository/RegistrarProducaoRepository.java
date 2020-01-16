@@ -11,7 +11,8 @@ public interface RegistrarProducaoRepository extends JpaRepository<Producao, Lon
 	List<Producao> findTop50ByOrderByCodigoDesc();
 
 	List<Producao> findAllByOrderByCodigoDesc();
-
 	
+	List<Producao> findByProduto_Setor_id(long id);
+
 
 }

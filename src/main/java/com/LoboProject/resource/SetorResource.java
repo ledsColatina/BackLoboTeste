@@ -47,17 +47,12 @@ public class SetorResource {
 	
 	@PostMapping()
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Setor> CriarSetor(@Valid @RequestBody Setor setor, HttpServletResponse response) {
-		Setor setorSalvo = setorRepository.save(setor);	
-		return ResponseEntity.ok().body(setorSalvo);
+	public ResponseEntity<?> CriarSetor(@Valid @RequestBody Setor setor, HttpServletResponse response) {
+		Setor setorSalvo = setorRepository.findBydescricao(setor.getDescricao());
+		if(setorSalvo == null) return ResponseEntity.ok().body(setorRepository.save(setor));
+		else return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Setor com Descrição Repetida!!");
 	}
-	
-	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public void DeletarSetor(@PathVariable Long id) {
-		setorRepository.deleteById(id);
-	}
+
 	
 	
 	@PutMapping("/{id}")
@@ -67,6 +62,13 @@ public class SetorResource {
 		if(setorup != null) return ResponseEntity.ok().body(setorup);
 		else return ResponseEntity.noContent().build();
 		
+	}
+	
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public void DeletarSetor(@PathVariable Long id) {
+		setorRepository.deleteById(id);
 	}
 	
 }

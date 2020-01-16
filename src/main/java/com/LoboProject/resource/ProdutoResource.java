@@ -60,6 +60,12 @@ public class ProdutoResource {
 		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/embalagem")
+	public ResponseEntity<List<Produto>> buscarProdutoEmbalagem(){
+		List<Produto> produtos = produtoRepository.findBySetor_descricao("Embalagem");
+		return !produtos.isEmpty() ? ResponseEntity.ok(produtos) : ResponseEntity.noContent().build();
+	}
+	
 	@GetMapping("/user/{username}")
 	public ResponseEntity<List<Produto>> buscarporUser(@PathVariable String username){
 		Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
@@ -89,10 +95,15 @@ public class ProdutoResource {
 	
 	@PostMapping()
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Produto> criarProduto(@Valid @RequestBody Produto produto, HttpServletResponse response) {
+	public ResponseEntity<?> criarProduto(@Valid @RequestBody Produto produto, HttpServletResponse response) {
 		produto = produtoService.formatarProduto(produto);
-		produtoRepository.save(produto);
-		return ResponseEntity.status(HttpStatus.OK).body(produto);
+		if(produtoService.verificarCodigo(produto) != null) {
+			if (produto!=null) return ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto));
+			else return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Descrição Repetida!!");
+		}else {
+			return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Código Repetido!!");
+		}
+		
 	}
 	
 	

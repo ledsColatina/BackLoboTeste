@@ -1,8 +1,6 @@
 package com.LoboProject.domain;
 
 import java.io.Serializable;
-
-import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,15 +17,15 @@ public class PedidoProduto implements Serializable{
 	@EmbeddedId
 	PedidoProdutoKey id;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@MapsId("pedido_codigo")
-    @JoinColumn(name = "pedido_codigo",  nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "pedido_codigo")
 	@JsonIgnore
     Pedido pedido;
  
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("produto_codigo")
-    @JoinColumn(name = "produto_codigo",  nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "produto_codigo")
     Produto produto;
  
     int quantidade;

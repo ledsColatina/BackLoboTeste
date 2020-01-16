@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Pedido;
+import com.LoboProject.domain.PedidoProduto;
+import com.LoboProject.domain.SimpleEnum;
+import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.service.PedidoService;
 
@@ -27,58 +31,102 @@ public class PedidoResource {
 	private PedidoRepository pedidorepository;
 
 	@Autowired
+	private PedidoProdutoRepository pedidoProdutorepository;
+	
+	@Autowired
 	private PedidoService pedidoService;
 	
 	
 	@GetMapping("/{tipo}")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
 		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/listar")
-	public ResponseEntity<List<Pedido>> listarTudo() {
-		List<Pedido> lista = pedidorepository.findAll();	
-		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
+	
+	@GetMapping("/demandas/{username}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<List<Pedido>> buscarDemandas(@PathVariable String username){
+		List <Pedido> lista = pedidoService.listarSeparadamente("EM_PRODUCAO");
+		for(int i = 0; i < lista.size(); i++) {
+			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
+		}
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
-	@GetMapping("/id/{id}")
-	public ResponseEntity<?> BuscarId(@PathVariable Long id){
-		Optional<Pedido> x = pedidorepository.findById(id);	
-		return x.isPresent() ? ResponseEntity.ok(x) : ResponseEntity.notFound().build() ;
+	@GetMapping("/demandasProd/{username}")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
+		List<PedidoProduto> lista = pedidoService.filtroPorUser(username);
+		lista = pedidoService.atualizarQtdP(lista);
+		return ResponseEntity.ok().body(lista);
 	}
-	
 	
 	@PostMapping()
 	public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
+		List<PedidoProduto> lista = pedidoService.itensPedido(pedido);
+		pedido.setItens(null);
 		Pedido pedidoSalvo = pedidorepository.save(pedido);
+		for(int i = 0; i < lista.size(); i++) pedidoProdutorepository.save(lista.get(i));
 		return ResponseEntity.ok().body(pedidoSalvo);
 	}
+	
 	
 	@PostMapping("/fila")
 	@Transactional
 	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
-		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.criarFila(pedidos)));
+		List<Pedido> x = pedidoService.criarFila(pedidos);
+		return ResponseEntity.ok().body(x);
 	}
 	
-	@PostMapping("/Nota")
+	@PostMapping("/embalar")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@Transactional
-	public ResponseEntity<List<Pedido>> gerarNotaFiscal (@RequestBody List<Pedido> pedidos){
-		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.gerarNota(pedidos)));
+	public ResponseEntity<Pedido> Embalar (@RequestBody Pedido pedido){
+		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.embalar(pedido)));
 	}
 	
-	@PostMapping("/Expedicao")
+	@PostMapping("/nota")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@Transactional
-	public ResponseEntity<List<Pedido>> gerarExpedicao (@RequestBody List<Pedido> pedidos){
-		return ResponseEntity.ok().body(pedidorepository.saveAll(pedidoService.expedir(pedidos)));
+	public ResponseEntity<Pedido> gerarNotaFiscal (@RequestBody Pedido pedido){
+		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.gerarNota(pedido)));
 	}
 	
-	@DeleteMapping("/{id}")
+	@PostMapping("/expedicao")
+	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@Transactional
+	public ResponseEntity<Pedido> gerarExpedicao (@RequestBody Pedido pedido){
+		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.expedir(pedido)));
+	}
+	
+	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
+//	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@Transactional
+	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
+		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade) == "Ok") {
+			pedidoProdutorepository.save(pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade));
+		}
+		return ResponseEntity.ok().body(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade));
+	}
+	
+	@PostMapping("/embalar/{codigoPedido}")
+//	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@Transactional
+	public ResponseEntity<Pedido> trocarEstadoEmbalagem(@PathVariable long codigoPedido){
+		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		pedido.get().setStatus(SimpleEnum.Status.EMBALADO);
+		pedidoService.DiminuirEmbalagem2(codigoPedido);
+		return ResponseEntity.ok().body(pedidorepository.save(pedido.get()));
+	}
+	
+	
+	@DeleteMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@Transactional
-	public void deletarPedido(@PathVariable Long id){
-		pedidorepository.deleteById(id);
+	public void deletarPedido(@PathVariable Long codigo){
+		pedidoService.deletar(codigo);
 	}
-	
 	
 }

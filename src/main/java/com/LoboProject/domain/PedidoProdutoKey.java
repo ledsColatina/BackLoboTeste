@@ -9,10 +9,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PedidoProdutoKey implements Serializable{
 	
-	@Column(name = "produto_codigo")
+	@Column(name = "produto_codigo", updatable = true)
     String produtoCodigo;
  
-    @Column(name = "pedido_codigo")
+    @Column(name = "pedido_codigo", updatable = true)
     Long pedidoCodigo;
 
 	public String getProdutoCodigo() {

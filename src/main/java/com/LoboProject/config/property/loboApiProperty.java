@@ -13,18 +13,13 @@ public class loboApiProperty {
 		return seguranca;
 	}
 	
-
 	public String getOriginPermitida() {
 		return originPermitida;
 	}
 
-
-
 	public void setOriginPermitida(String originPermitida) {
 		this.originPermitida = originPermitida;
 	}
-
-
 
 	public static class Seguranca{
 		

@@ -14,5 +14,11 @@ public interface ProdutoRepository extends JpaRepository<Produto, String>{
 	public List<ResumoProduto> resumir();
 
 	public List<Produto> findByComposicao_ProdutoParte_codigo(String codigo);
+
+	public List<Produto> findBySetor_descricao(String string);
+
+	public Produto findBydescricao(String descricao);
+	
+	
 	
 }

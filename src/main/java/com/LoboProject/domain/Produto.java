@@ -2,6 +2,7 @@ package com.LoboProject.domain;
 
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -10,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -21,6 +21,7 @@ public class Produto {
 	
 	@NotEmpty(message = "Descricao Deverá ser informada")
 	@NotNull(message = "Descricao Deverá ser informada")
+	@Column(unique=true)
 	private String descricao;
 	
 	private Long quantidadeMin = (long) 0;
@@ -36,10 +37,7 @@ public class Produto {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name="id_produto_todo")
 	private List<Composicao> composicao;
-	
-	@OneToMany(mappedBy = "produto")
-	@JsonIgnore
-	List<PedidoProduto> produtos;
+
 	
 	public Long getQuantidadeAtual() {
 		return quantidadeAtual;
@@ -95,14 +93,6 @@ public class Produto {
 
 	public void setQuantidadeMax(Long quantidadeMax) {
 		this.quantidadeMax = quantidadeMax;
-	}
-
-	public List<PedidoProduto> getProdutos() {
-		return produtos;
-	}
-
-	public void setProdutos(List<PedidoProduto> produtos) {
-		this.produtos = produtos;
 	}
 
 	

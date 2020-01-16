@@ -1,5 +1,7 @@
 package com.LoboProject.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -88,6 +90,34 @@ public class ProducaoService {
 			return ResponseEntity.status(HttpStatus.OK).body(producaoSalva);
 		}
 		else return ResponseEntity.status(HttpStatus.CONFLICT).build();
+	}
+	
+	public List<Producao> porUser(String username){
+		Optional<Usuario> usuario = userRepository.findByUsername(username);
+		List<Producao> list = new ArrayList<>();
+		if(usuario.isPresent() == false) return null;
+		else {
+			for (int i = 0; i < usuario.get().getSetores().size(); i++) {
+				list.addAll(producaoRepository.findByProduto_Setor_id(usuario.get().getSetores().get(i).getId()));
+			}if (usuario.get().isTipo() == true) {
+				list = producaoRepository.findAllByOrderByCodigoDesc();
+				return list;
+			}
+		}
+		return list;
+	}
+	
+	public List<Producao> ordenarProducao(List<Producao> lista){
+		Producao aux;
+		for(int i = 0; i < lista.size()-1; i++) {
+			if(lista.get(i).getCodigo() < lista.get(i+1).getCodigo()) {
+				aux = lista.get(i);
+				lista.set(i, lista.get(i+1));
+				lista.set(i+1, aux);
+				i--;
+			}
+		}
+		return lista;
 	}
 	
 }

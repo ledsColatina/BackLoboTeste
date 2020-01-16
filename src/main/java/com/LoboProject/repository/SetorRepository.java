@@ -5,4 +5,6 @@ import com.LoboProject.domain.Setor;
 
 public interface SetorRepository extends JpaRepository<Setor, Long>{
 
+	Setor findBydescricao(String descricao);
+
 }

@@ -19,7 +19,9 @@ public class SimpleEnumStat {
 	  
 	  public static String enumStatus( Status status) {
 		  
-		  if(status == Status.EM_PRODUCAO) {
+		  if(status == Status.FILA) {
+	    	   return "FILA";
+	  	  }	else if(status == Status.EM_PRODUCAO) {
 			  return "EM PRODUCAO";
 		  } else if( status == Status.EMBALADO) {
 			  return "EMBALADO";
@@ -27,9 +29,7 @@ public class SimpleEnumStat {
 			  return "DESPACHADO";
 		  } else if ( status == Status.NOTA_EMITIDA){
 			  return "NOTA EMITIDA";
-		  }else if(status == Status.FILA) {
-	    	   return "FILA";
-	      }else {
+		  }else {
 			  return null; 
 		  }
 	  }

@@ -27,9 +27,11 @@ public class ProducaoResource {
 	@Autowired
 	private ProducaoService producaoService;
 	
-	@GetMapping
-	public ResponseEntity<List<Producao>> listarProducao(){
+	@GetMapping("/{username}")
+	public ResponseEntity<List<Producao>> listarProducao(@PathVariable String username){
 		List<Producao> producao = producaoRepository.findAllByOrderByCodigoDesc();
+		producao = producaoService.porUser(username);
+	//	producao = producaoService.ordenarProducao(producao);
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	

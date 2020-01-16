@@ -11,6 +11,7 @@ public class Setor {
 	private Long id;
 	
 	@NotNull(message = "Descricao Deverá ser informada")
+	@Column(unique=true)
 	private String descricao;
 	
 	@NotNull

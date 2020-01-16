@@ -25,8 +25,14 @@ public class ProdutoService {
 	public Produto formatarProduto(Produto produto) {
 		String codigo = produto.getCodigo().toLowerCase();
 		produto.setCodigo(codigo);
+		if(produtoRepository.findBydescricao(produto.getDescricao())!= null) return null;
 		if(produto.getSetor().isBase() == true) produto.setComposicao(null);
 		return produto;
+	}
+	
+	public Produto verificarCodigo(Produto produto) {
+		if(produtoRepository.findById(produto.getCodigo())!= null) return null;
+		else return produto;
 	}
 	
 	// Procura_Bugs
