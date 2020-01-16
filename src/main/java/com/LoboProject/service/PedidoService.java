@@ -83,7 +83,7 @@ public class PedidoService {
 				if (ultimo.get().getPrioridade() == null) ultimo.get().setPrioridade((long) 1);
 				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 				prioridade = ultimo.get().getPrioridade() + 1;
-				pedidos.get(i).setPrioridade(prioridade);
+				pedidos.get(i).setPrioridade(prioridade+1);
 				//pedidos.get(i).setPrioridade((long)1);
 				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
 				pedidorepository.save(pedidos.get(i));
