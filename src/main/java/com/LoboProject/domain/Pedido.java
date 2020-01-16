@@ -19,7 +19,7 @@ public class Pedido{
 	@Id
 	private Long codigo;
 	
-	private Long prioridade;
+	private Long prioridade = (long)0;
 	
 	@NotNull
 	private String nomeCliente;

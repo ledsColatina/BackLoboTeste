@@ -98,7 +98,7 @@ public class PedidoService {
 	}
 	
 	public long listarultimaprioridade() {
-		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeAsc();
+		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 		System.out.println("\n\n oioioi\n");
 		if(ultimo.isPresent()) {
 			System.out.println("passei " + ultimo.get().getCodigo() + "  " + ultimo.get().getPrioridade());
