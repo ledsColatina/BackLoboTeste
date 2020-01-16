@@ -78,7 +78,7 @@ public class PedidoResource {
 	@Transactional
 	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
 		List<Pedido> x = pedidoService.criarFila(pedidos);
-		if (x == null) ResponseEntity.badRequest().body("Fail");
+		if (x.isEmpty()) ResponseEntity.badRequest().body("Fail");
 		pedidorepository.saveAll(x);
 		return ResponseEntity.ok().body(x);
 	}

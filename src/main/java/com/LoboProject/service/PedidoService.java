@@ -87,6 +87,7 @@ public class PedidoService {
 				pedidos.get(i).setPrioridade(prioridade);
 				//pedidos.get(i).setPrioridade((long)1);
 				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
+				pedidorepository.save(pedidos.get(i));
 			}
 			return pedidos;
 		}
