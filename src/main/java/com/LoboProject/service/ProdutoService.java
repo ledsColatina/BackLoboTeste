@@ -31,7 +31,7 @@ public class ProdutoService {
 	}
 	
 	public Produto verificarCodigo(Produto produto) {
-		if(produtoRepository.findById(produto.getCodigo())!= null) return null;
+		if(produtoRepository.findById(produto.getCodigo()).isPresent()) return null;
 		else return produto;
 	}
 	
