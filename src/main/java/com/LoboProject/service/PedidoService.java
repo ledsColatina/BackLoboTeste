@@ -97,6 +97,11 @@ public class PedidoService {
 		
 	}
 	
+	public long listarultimaprioridade() {
+		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+		return ultimo.get().getPrioridade();
+	}
+	
 	public List<PedidoProduto> itensPedido(Pedido pedido){
 		List<PedidoProduto> lista = new ArrayList<>();
 		for(int i = 0; i  < pedido.getItens().size(); i++) {
