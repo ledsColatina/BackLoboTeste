@@ -75,7 +75,6 @@ public class PedidoResource {
 	
 	
 	@PostMapping("/fila")
-	@Transactional
 	public ResponseEntity<String> criarFila (@RequestBody List<Pedido> pedidos){
 		List<Pedido> x = pedidoService.criarFila(pedidos);
 		if (x.isEmpty()) ResponseEntity.badRequest().body("Fail");
