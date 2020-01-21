@@ -31,7 +31,7 @@ public class ProducaoResource {
 	public ResponseEntity<List<Producao>> listarProducao(@PathVariable String username){
 		List<Producao> producao = producaoRepository.findAllByOrderByCodigoDesc();
 		producao = producaoService.porUser(username);
-	//	producao = producaoService.ordenarProducao(producao);
+		producao = producaoService.ordenarProducao(producao);
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
@@ -43,14 +43,14 @@ public class ProducaoResource {
 	
 	
 	@PostMapping()
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER','ADMIN')")
 	public  ResponseEntity<?> criarProducao(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		return producaoService.criarProducao(producao);
 	}
 	
 	
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('USER', 'ADMIN')")
 	public ResponseEntity<?> deletarProducao(@PathVariable Long id){
 		return producaoService.deletarProducao(id);
 	}

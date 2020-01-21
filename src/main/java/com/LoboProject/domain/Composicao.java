@@ -24,6 +24,8 @@ public class Composicao {
 	@JoinColumn(name = "id_produto_parte")
 	private Produto produtoParte;
 	
+	private String id_produto_todo;
+	
 
 	public Long getQuantidade() {
 		return quantidade;
@@ -49,5 +51,14 @@ public class Composicao {
 	public void setCodigo(Long codigo) {
 		this.codigo = codigo;
 	}
+
+	public String getId_produto_todo() {
+		return id_produto_todo;
+	}
+
+	public void setId_produto_todo(String id_produto_todo) {
+		this.id_produto_todo = id_produto_todo;
+	}
+	
 	
 }

@@ -125,10 +125,10 @@ public class ProdutoResource {
 	
 
 	@PutMapping("/{id}")
-	@Transactional
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
 		return produtoService.atualizarProduto(produto, id);
+		//return produtoService.atualizarProduto(produto, id);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.LoboProject.resource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Pedido;
 import com.LoboProject.domain.PedidoProduto;
 import com.LoboProject.domain.SimpleEnum;
+import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.service.PedidoService;
+import com.LoboProject.service.ProdutoService;
 
 
 @RestController
@@ -36,10 +40,14 @@ public class PedidoResource {
 	@Autowired
 	private PedidoService pedidoService;
 	
+	@Autowired
+	private ComposicaoRepository comprepository;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@GetMapping("/{tipo}")
-//	@PreAuthorize("hasAuthority('USER')")
-//	@PreAuthorize("hasAuthority('EMBALAGEM') OR ('ADMIN')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
 		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
@@ -53,15 +61,30 @@ public class PedidoResource {
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
 		}
+		lista = pedidoService.quebrarDemandas(lista);
+		lista.addAll(pedidoService.estoqueMin());
+		lista = pedidoService.formatarTirandoRepetidos(lista);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
 	@GetMapping("/demandasProd/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
-		List<PedidoProduto> lista = pedidoService.filtroPorUser(username);
-		lista = pedidoService.atualizarQtdP(lista);
+		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();// = pedidoService.filtroPorUser(username);
+		List<Pedido> aux = buscarDemandas(username).getBody();
+		for(int i = 0; i < aux.size(); i++)  lista.addAll(pedidoService.atualizarQtdP(aux.get(i).getItens()));
+		lista = pedidoService.formatarComposicaoSemSomar(lista);
 		return ResponseEntity.ok().body(lista);
+	}
+	
+	@GetMapping("/estoque/{id_produto_parte}")
+	public List<String> estoque(@PathVariable String id_produto_parte){
+		return produtoService.limitarLoop(id_produto_parte);
+	}
+	
+	@GetMapping("/estoqus/{id_produto_parte}")
+	public List<Composicao> estoque2(@PathVariable String id_produto_parte){
+		return comprepository.findAllProdutoTodo(id_produto_parte);
 	}
 	
 	@PostMapping()
@@ -75,12 +98,8 @@ public class PedidoResource {
 	
 	
 	@PostMapping("/fila")
-	public ResponseEntity<?> criarFila (@RequestBody List<Pedido> pedidos){
-		//List<Pedido> x = 
-		//if (x.isEmpty()) ResponseEntity.badRequest().body("Fail");
-		//pedidorepository.saveAll(x);
-		//return ResponseEntity.ok().body(pedidoService.listarultimaprioridade());
-		return pedidoService.criarFila(pedidos) != null ? ResponseEntity.ok().body("aaa") :  ResponseEntity.badRequest().body("aaa");
+	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
+		return pedidoService.criarFila(pedidos) != null ? ResponseEntity.ok().body(pedidos) :  ResponseEntity.badRequest().body(null);
 	}
 	
 	@PostMapping("/embalar")
@@ -98,14 +117,14 @@ public class PedidoResource {
 	}
 	
 	@PostMapping("/expedicao")
-	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@PreAuthorize("hasAuthority('EMBALAGEM')")
 	@Transactional
 	public ResponseEntity<Pedido> gerarExpedicao (@RequestBody Pedido pedido){
 		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.expedir(pedido)));
 	}
 	
 	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
-//	@PreAuthorize("hasAuthority('EMBALAGEM') AND ('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@Transactional
 	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
 		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade) == "Ok") {
@@ -115,7 +134,7 @@ public class PedidoResource {
 	}
 	
 	@PostMapping("/embalar/{codigoPedido}")
-//	@PreAuthorize("hasAuthority('EMBALAGEM') OR ('ADMIN')")
+	@PreAuthorize("hasAuthority('EMBALAGEM', 'ADMIN')")
 	@Transactional
 	public ResponseEntity<Pedido> trocarEstadoEmbalagem(@PathVariable long codigoPedido){
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
