@@ -30,7 +30,7 @@ public class AjusteResource {
 	
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<Ajuste>> listarajustes(){
 		List<Ajuste> ajustes = ajusteRepository.findAllByOrderByCodigoDesc();
 		return !ajustes.isEmpty() ? ResponseEntity.ok(ajustes) : ResponseEntity.noContent().build();
@@ -38,7 +38,7 @@ public class AjusteResource {
 	
 	
 	@PostMapping()
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('USER')")
 	public  ResponseEntity<?> criarAjuste(@Valid @RequestBody Ajuste ajuste, HttpServletResponse response) {
 		return ajusteService.criarAjuste(ajuste);
 	}

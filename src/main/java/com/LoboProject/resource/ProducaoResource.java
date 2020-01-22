@@ -43,14 +43,14 @@ public class ProducaoResource {
 	
 	
 	@PostMapping()
-	@PreAuthorize("hasAuthority('USER','ADMIN')")
+	@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
 	public  ResponseEntity<?> criarProducao(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		return producaoService.criarProducao(producao);
 	}
 	
 	
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAuthority('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
 	public ResponseEntity<?> deletarProducao(@PathVariable Long id){
 		return producaoService.deletarProducao(id);
 	}

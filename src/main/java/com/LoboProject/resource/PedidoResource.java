@@ -98,33 +98,34 @@ public class PedidoResource {
 	
 	
 	@PostMapping("/fila")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'GERÊNCIA DE PRODUÇÃO')")
 	public ResponseEntity<List<Pedido>> criarFila (@RequestBody List<Pedido> pedidos){
 		return pedidoService.criarFila(pedidos) != null ? ResponseEntity.ok().body(pedidos) :  ResponseEntity.badRequest().body(null);
 	}
 	
 	@PostMapping("/embalar")
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')")
 	@Transactional
 	public ResponseEntity<Pedido> Embalar (@RequestBody Pedido pedido){
 		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.embalar(pedido)));
 	}
 	
 	@PostMapping("/nota")
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'NOTAS FISCAIS')")
 	@Transactional
 	public ResponseEntity<Pedido> gerarNotaFiscal (@RequestBody Pedido pedido){
 		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.gerarNota(pedido)));
 	}
 	
 	@PostMapping("/expedicao")
-	@PreAuthorize("hasAuthority('EMBALAGEM')")
+	@PreAuthorize("hasAnyAuthority('ADMIN','EXPEDIÇÃO')")
 	@Transactional
 	public ResponseEntity<Pedido> gerarExpedicao (@RequestBody Pedido pedido){
 		return ResponseEntity.ok().body(pedidorepository.save(pedidoService.expedir(pedido)));
 	}
 	
 	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')")
 	@Transactional
 	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
 		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade) == "Ok") {
@@ -134,7 +135,7 @@ public class PedidoResource {
 	}
 	
 	@PostMapping("/embalar/{codigoPedido}")
-	@PreAuthorize("hasAuthority('EMBALAGEM', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('EMBALAGEM', 'ADMIN')")
 	@Transactional
 	public ResponseEntity<Pedido> trocarEstadoEmbalagem(@PathVariable long codigoPedido){
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
@@ -145,7 +146,7 @@ public class PedidoResource {
 	
 	
 	@DeleteMapping("/{codigo}")
-	@PreAuthorize("hasAuthority ('ADMIN')")
+	@PreAuthorize("hasAnyAuthority ('ADMIN', 'USER')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarPedido(@PathVariable Long codigo){
 		pedidoService.deletar(codigo);
