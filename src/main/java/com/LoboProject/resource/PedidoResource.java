@@ -132,7 +132,7 @@ public class PedidoResource {
 			PedidoProduto item = pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade);
 			pedidoProdutorepository.save(item);
 			return ResponseEntity.ok().body("Ok");
-		}else return ResponseEntity.notFound().build();
+		}else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque Insuficiente para o Pedido!!");
 		
 	}
 	
