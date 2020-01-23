@@ -61,8 +61,8 @@ public class PedidoResource {
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
 		}
-		lista = pedidoService.quebrarDemandas(lista);
 		lista.addAll(pedidoService.estoqueMin());
+		lista = pedidoService.quebrarDemandas(lista);
 		lista = pedidoService.formatarTirandoRepetidos(lista);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
@@ -125,13 +125,15 @@ public class PedidoResource {
 	}
 	
 	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')") 
 	@Transactional
 	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
-		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade) == "Ok") {
-			pedidoProdutorepository.save(pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade));
-		}
-		return ResponseEntity.ok().body(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade));
+		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade).equals("OK")) {
+			PedidoProduto item = pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade);
+			pedidoProdutorepository.save(item);
+			return ResponseEntity.ok().body("Ok");
+		}else return ResponseEntity.notFound().build();
+		
 	}
 	
 	@PostMapping("/embalar/{codigoPedido}")
