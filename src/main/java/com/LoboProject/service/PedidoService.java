@@ -281,6 +281,17 @@ public class PedidoService {
 		return ("OK");
 	}
 	
+	public String AumentarEmbalagem(long codigoPedido) {
+		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		int i;
+		for(i = 0; i < pedido.get().getItens().size(); i++){
+			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
+			prod.get().setQuantidadeAtual(prod.get().getQuantidadeAtual() + pedido.get().getItens().get(i).getQuantidade());
+			produtoRepository.save(prod.get());
+		}
+		return ("OK");
+	}
+	
 
 	public String DiminuirEmbalagem2(long codigoPedido) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
@@ -299,6 +310,10 @@ public class PedidoService {
 	
 	@Transactional
 	public int deletar(long codigo) {
+		Optional<Pedido> pedido = pedidorepository.findById(codigo);
+		if((pedido.get().getStatus().equals(SimpleEnum.Status.EMBALADO)) || (pedido.get().getStatus().equals(SimpleEnum.Status.NOTA_EMITIDA))){
+			AumentarEmbalagem(codigo);
+		}
 		pedidoProdutoRepository.deleteByPedido_codigo(codigo);
 		pedidorepository.deleteById(codigo);
 		return 1;

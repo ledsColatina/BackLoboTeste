@@ -73,7 +73,7 @@ public class ProducaoService {
 		Optional<Produto> produto = produtoRepository.findById(producao.getProduto().getCodigo());
 		produto.get().setQuantidadeAtual(produto.get().getQuantidadeAtual() + producao.getQuantidade());
 		producao.setProduto(produto.get());
-		
+		if(producao.getQuantidade() <= 0) return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade para Produção Inválida");
 		if(verificarComp(produto.get(), producao) == 1) {
 		int i = 0;
 		if(!produto.get().getComposicao().isEmpty()) {
