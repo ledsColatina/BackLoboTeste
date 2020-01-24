@@ -60,7 +60,6 @@ public class ProdutoService {
 		return produtoRepository.findById(id)
 			           .map(record -> {
 			               record.setDescricao(produto.getDescricao());
-			               record.setQuantidadeAtual(produto.getQuantidadeAtual());
 			               record.setQuantidadeMin(produto.getQuantidadeMin());
 			               record.setQuantidadeMax(produto.getQuantidadeMax());
 			               record.setSetor(produto.getSetor());

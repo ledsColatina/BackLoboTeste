@@ -312,7 +312,7 @@ public class PedidoService {
 	public int deletar(long codigo) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigo);
 		if((pedido.get().getStatus().equals(SimpleEnum.Status.EMBALADO)) || (pedido.get().getStatus().equals(SimpleEnum.Status.NOTA_EMITIDA))){
-			AumentarEmbalagem(codigo);
+			AumentarEmbalagem(codigo); 	// Caso_Exclua_Precisa_Incrementar_Novamente
 		}
 		pedidoProdutoRepository.deleteByPedido_codigo(codigo);
 		pedidorepository.deleteById(codigo);

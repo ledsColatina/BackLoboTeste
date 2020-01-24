@@ -74,6 +74,7 @@ public class ProducaoService {
 		produto.get().setQuantidadeAtual(produto.get().getQuantidadeAtual() + producao.getQuantidade());
 		producao.setProduto(produto.get());
 		if(producao.getQuantidade() <= 0) return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade para Produção Inválida");
+		if((produto.get().getQuantidadeMax() != 0 )&&(produto.get().getQuantidadeMax() < producao.getQuantidade())) return ResponseEntity.status(HttpStatus.CONFLICT).body("Quantidade para Produção Inválida Excede Estoque Máximo!!");
 		if(verificarComp(produto.get(), producao) == 1) {
 		int i = 0;
 		if(!produto.get().getComposicao().isEmpty()) {
