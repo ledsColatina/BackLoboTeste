@@ -126,7 +126,6 @@ public class PedidoResource {
 	
 	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')") 
-	@Transactional
 	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
 		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade).equals("OK")) {
 			PedidoProduto item = pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade);
