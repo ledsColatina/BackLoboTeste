@@ -272,8 +272,8 @@ public class PedidoService {
 		int i;
 		for(i = 0; i < pedido.get().getItens().size(); i++){
 			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
-			if(prod.get().getQuantidadeAtual() - quantidade >= 0){
-				prod.get().setQuantidadeAtual(prod.get().getQuantidadeAtual() - quantidade);
+			if((prod.get().getQuantidadeAtual() - quantidade) >= 0){
+				//prod.get().setQuantidadeAtual(prod.get().getQuantidadeAtual() - quantidade);
 			}else {
 				return ("Produto Insuficiente");
 			}
