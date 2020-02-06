@@ -62,8 +62,8 @@ public class PedidoResource {
 			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
 		}
 		lista.addAll(pedidoService.estoqueMin());
-		lista = pedidoService.quebrarDemandas(lista);
 		lista = pedidoService.formatarTirandoRepetidos(lista);
+		lista = pedidoService.quebrarDemandas(lista);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
