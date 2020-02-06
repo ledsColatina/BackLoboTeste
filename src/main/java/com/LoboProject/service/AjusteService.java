@@ -41,11 +41,11 @@ public class AjusteService {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
-	public  ResponseEntity<?> criarAjuste(Ajuste ajuste) {
+	public ResponseEntity<?> criarAjuste(Ajuste ajuste) {
 		ajuste.setData(new java.util.Date(System.currentTimeMillis()));
 		Optional<Produto> produto = produtoRepository.findById(ajuste.getProduto().getCodigo());
 		if((produto.get().getQuantidadeAtual()- ajuste.getQuantidade() < 0)&&(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "DECREMENTO")) return ResponseEntity.ok("BLOQUEADO: AJUSTE NÃO PODE FICAR NEGATIVO!!");
-		if((produto.get().getQuantidadeAtual() + ajuste.getQuantidade()) > (produto.get().getQuantidadeMax())) return ResponseEntity.ok("BLOQUEADO: AJUSTE EXCEDE ESTOQUE MÁXIMO!!");
+		if((SimpleEnumStat.enumInIf(ajuste.getTipo()) != "DECREMENTO")&&(produto.get().getQuantidadeMax() != 0) && ((produto.get().getQuantidadeAtual() + ajuste.getQuantidade())) > (produto.get().getQuantidadeMax())) return ResponseEntity.ok("BLOQUEADO: AJUSTE EXCEDE ESTOQUE MÁXIMO!!");
 		if(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "INCREMENTO") produto.get().setQuantidadeAtual(produto.get().getQuantidadeAtual() + ajuste.getQuantidade());
 		else if(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "DECREMENTO") produto.get().setQuantidadeAtual(produto.get().getQuantidadeAtual() - ajuste.getQuantidade());
 		else if(SimpleEnumStat.enumInIf(ajuste.getTipo()) == "AJUSTE") produto.get().setQuantidadeAtual(ajuste.getQuantidade());;
