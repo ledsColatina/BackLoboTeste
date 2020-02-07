@@ -62,15 +62,15 @@ public class PedidoResource {
 			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
 		}
 		lista.addAll(pedidoService.estoqueMin());
-		lista = pedidoService.formatarTirandoRepetidos(lista);
 		lista = pedidoService.quebrarDemandas(lista);
+		lista = pedidoService.formatarTirandoRepetidos(lista);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
 	@GetMapping("/demandasProd/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
-		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();// = pedidoService.filtroPorUser(username);
+		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
 		List<Pedido> aux = buscarDemandas(username).getBody();
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(pedidoService.atualizarQtdP(aux.get(i).getItens()));
 		lista = pedidoService.formatarComposicaoSemSomar(lista);

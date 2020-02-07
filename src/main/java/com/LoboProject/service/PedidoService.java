@@ -220,8 +220,8 @@ public class PedidoService {
 					/*pedidoProduto.setQuantidade((int) ((lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getQuantidadeAtual() - lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
 					* lista.get(i).getItens().get(j).getQuantidade())) * -1);*/
 					pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-							* lista.get(i).getItens().get(j).getQuantidade()) );
-					if((pedidoProduto.getQuantidade() >  0)) {
+							* lista.get(i).getItens().get(j).getQuantidade()));
+					if((pedidoProduto.getQuantidade() >=  0)) {
 						lista.get(i).getItens().add(pedidoProduto);	
 					}
 					
