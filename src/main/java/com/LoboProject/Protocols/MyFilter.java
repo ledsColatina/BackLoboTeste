@@ -13,7 +13,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-
+//comnt
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class MyFilter implements Filter {
@@ -27,7 +27,7 @@ public class MyFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;						//http://172.16.36.10:4200
 																						//http://localhost:4200 
-		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");  //https://lobo-front.herokuapp.com, http://172.16.36.10:4200
+		response.setHeader("Access-Control-Allow-Origin", "https://lobo-front.herokuapp.com");  //https://lobo-front.herokuapp.com, http://172.16.36.10:4200
         response.setHeader("Access-Control-Allow-Credentials", "true");
 		
 		if ("OPTIONS".equals(request.getMethod())) {
