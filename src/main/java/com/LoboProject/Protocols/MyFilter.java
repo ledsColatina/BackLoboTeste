@@ -13,12 +13,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-//comnt
+
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class MyFilter implements Filter {
 
-//	private String originPermitida = "*"; // TODO: Configurar_para_diferentes_ambientes
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -27,14 +26,13 @@ public class MyFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;						//http://172.16.36.10:4200
 																						//http://localhost:4200 
-		response.setHeader("Access-Control-Allow-Origin", "https://lobo-front.herokuapp.com");  //https://lobo-front.herokuapp.com, http://172.16.36.10:4200
+		response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200 ");  //https://lobo-front.herokuapp.com, http://172.16.36.10:4200
         response.setHeader("Access-Control-Allow-Credentials", "true");
 		
 		if ("OPTIONS".equals(request.getMethod())) {
 			response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
         	response.setHeader("Access-Control-Allow-Headers", "Authorization, Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
         	response.setHeader("Access-Control-Max-Age", "3600");
-			
 			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			chain.doFilter(req, resp);

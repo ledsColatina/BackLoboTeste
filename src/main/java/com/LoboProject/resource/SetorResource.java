@@ -33,24 +33,23 @@ public class SetorResource {
 	private SetorService setorService;
 	
 	@GetMapping
-	public ResponseEntity<?> listarSetor(){
+	public ResponseEntity<List<Setor>> listarSetor(){
 		List<Setor> setor = setorRepository.findAll();
 		return !setor.isEmpty() ? ResponseEntity.ok(setor) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> BuscarId(@PathVariable Long id){
+	public ResponseEntity<Setor> BuscarId(@PathVariable Long id){
 		Optional<Setor> setor = setorRepository.findById(id);	
-		return setor.isPresent() ? ResponseEntity.ok(setor) : ResponseEntity.notFound().build() ;
+		return setor.isPresent() ? ResponseEntity.ok(setor.get()) : ResponseEntity.notFound().build() ;
 	}
 	
 	
-	@PostMapping()
+	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> CriarSetor(@Valid @RequestBody Setor setor, HttpServletResponse response) {
 		Setor setorSalvo = setorRepository.findBydescricao(setor.getDescricao());
-		if(setorSalvo == null) return ResponseEntity.ok().body(setorRepository.save(setor));
-		else return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Setor com Descrição Repetida!!");
+		return !setorSalvo.equals(null) ? ResponseEntity.ok().body(setorSalvo) : ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Setor com Descrição Repetida!!");
 	}
 
 	
@@ -59,8 +58,7 @@ public class SetorResource {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Setor> atualizarSetor(@PathVariable Long id, @Valid @RequestBody Setor setor){
 		Setor setorup = setorService.atualizar(id, setor);
-		if(setorup != null) return ResponseEntity.ok().body(setorup);
-		else return ResponseEntity.noContent().build();
+		return !setorup.equals(null) ? ResponseEntity.ok().body(setorup) : ResponseEntity.notFound().build();
 		
 	}
 	

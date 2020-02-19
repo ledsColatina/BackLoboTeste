@@ -96,7 +96,7 @@ public class PedidoResource {
 		return comprepository.findAllProdutoTodo(id_produto_parte);
 	}
 	
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<Pedido> criarPedido(@RequestBody Pedido pedido) {
 		List<PedidoProduto> lista = pedidoService.itensPedido(pedido);
 		pedido.setItens(null);
@@ -141,7 +141,6 @@ public class PedidoResource {
 			pedidoProdutorepository.save(item);
 			return ResponseEntity.ok().body("Ok");
 		}else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque Insuficiente para o Pedido!!");
-		
 	}
 	
 	@PostMapping("/embalar/{codigoPedido}")

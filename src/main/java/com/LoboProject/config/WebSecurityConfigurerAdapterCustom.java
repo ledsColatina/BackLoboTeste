@@ -32,7 +32,6 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
     @Autowired
     public void globalUserDetails(final AuthenticationManagerBuilder auth) throws Exception {
 		
-		/*auth.inMemoryAuthentication().withUser("admin").password(passwordEncoder.encode("admin")).roles("USER");*/
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -44,7 +43,7 @@ public class WebSecurityConfigurerAdapterCustom extends WebSecurityConfigurerAda
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/pedidos").permitAll()//.antMatchers("/setores").permitAll()
+        http.authorizeRequests().antMatchers("/pedidos").permitAll()
         .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
         .anyRequest().authenticated()
         .and()

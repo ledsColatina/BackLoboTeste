@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Producao;
-import com.LoboProject.repository.RegistrarProducaoRepository;
+import com.LoboProject.domain.Relatorios;
+import com.LoboProject.repository.ProducaoRepository;
 import com.LoboProject.service.ProducaoService;
 
 @RestController
@@ -22,7 +23,7 @@ import com.LoboProject.service.ProducaoService;
 public class ProducaoResource {
 
 	@Autowired
-	private RegistrarProducaoRepository producaoRepository;
+	private ProducaoRepository producaoRepository;
 	
 	@Autowired
 	private ProducaoService producaoService;
@@ -30,8 +31,22 @@ public class ProducaoResource {
 	@GetMapping("/{username}")
 	public ResponseEntity<List<Producao>> listarProducao(@PathVariable String username){
 		List<Producao> producao = producaoRepository.findAllByOrderByCodigoDesc();
-		producao = producaoService.porUser(username);
+		producao = producaoService.listarProducaoporUser(username);
 		producao = producaoService.ordenarProducao(producao);
+		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/relatorioSetor")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public  ResponseEntity<List<?>> listarProducao30diasSetor(){
+		List<Relatorios> producao = producaoService.agruparComUltimosDiasPorSetor();
+		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/relatorioProdutos/{periodo}")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public  ResponseEntity<List<?>> listarProducao30diasProdutoSetor(@PathVariable String periodo){
+		List<Relatorios> producao = producaoService.agruparComUltimosDiasPorProdutoSetor(periodo);
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
@@ -42,7 +57,7 @@ public class ProducaoResource {
 	}
 	
 	
-	@PostMapping()
+	@PostMapping
 	@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
 	public  ResponseEntity<?> criarProducao(@Valid @RequestBody Producao producao, HttpServletResponse response) {
 		return producaoService.criarProducao(producao);

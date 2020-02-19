@@ -9,9 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.LoboProject.domain.Producao;
 import com.LoboProject.domain.Produto;
+import com.LoboProject.domain.Relatorios;
 import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.ProdutoRepository;
-import com.LoboProject.repository.RegistrarProducaoRepository;
+import com.LoboProject.repository.ProducaoRepository;
 import com.LoboProject.repository.UsuarioRepository;
 
 @Service
@@ -21,7 +22,7 @@ public class ProducaoService {
 	private ProdutoRepository produtoRepository;
 	
 	@Autowired
-	private RegistrarProducaoRepository producaoRepository;
+	private ProducaoRepository producaoRepository;
 	
 	@Autowired
 	private UsuarioRepository userRepository;
@@ -36,6 +37,58 @@ public class ProducaoService {
 		produtoRepository.save(produto.get());
 		producaoRepository.deleteById(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+	
+	//Agrupa_Pedidos_por_Data_e_Setor_para_gerar_relatório
+	public List<Relatorios> agruparComUltimosDiasPorSetor(){
+		List<Producao> producoes = producaoRepository.findByUltimasProducoes();
+		List<Relatorios> listaRelatorio = new ArrayList<>();
+		int cont = 0;
+		
+		for(int i = 0; i < producoes.size(); i++) {
+			cont = 0;
+			for(int j = 0; j < listaRelatorio.size(); j++) {
+				if((!listaRelatorio.isEmpty())  && (listaRelatorio.get(j).getName().equals(producoes.get(i).getProduto().getSetor().getDescricao()))) {
+					listaRelatorio.get(j).setValue(((int)(listaRelatorio.get(j).getValue() + producoes.get(i).getQuantidade())));
+					cont = 1;
+				}
+			}
+
+			if((listaRelatorio.isEmpty()) || (cont != 1)) {
+				Relatorios aux = new Relatorios();
+				aux.setName((producoes.get(i).getProduto().getSetor().getDescricao()));
+				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));
+				listaRelatorio.add(aux);
+			}
+		}
+		
+		return listaRelatorio;
+	}
+	
+	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
+	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(String id){
+		List<Producao> producoes = producaoRepository.findByUltimasProducoes();
+		List<Relatorios> listaRelatorio = new ArrayList<>();
+		int cont = 0;
+		
+		for(int i = 0; i < producoes.size(); i++) {
+			cont = 0;
+			for(int j = 0; j < listaRelatorio.size(); j++) {
+				if((!listaRelatorio.isEmpty()) &&(listaRelatorio.get(j).getName().equals(producoes.get(i).getProduto().getDescricao()))) {
+					listaRelatorio.get(j).setValue(((int)(listaRelatorio.get(j).getValue() + producoes.get(i).getQuantidade())));
+					cont = 1;
+				}
+			}
+
+			if((producoes.get(i).getProduto().getSetor().getDescricao().equals(id)) && ((listaRelatorio.isEmpty()) || (cont != 1))) {
+				Relatorios aux = new Relatorios();
+				aux.setName((producoes.get(i).getProduto().getDescricao()));
+				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));
+				listaRelatorio.add(aux);
+			}
+		}
+		
+		return listaRelatorio;
 	}
 	
 	
@@ -67,7 +120,7 @@ public class ProducaoService {
 		return produto;
 	}
 	
-	
+	// Registrando_produção_com_a_data_de_agora
 	public  ResponseEntity<?> criarProducao(Producao producao) {
 		producao.setData(new java.util.Date(System.currentTimeMillis()));
 		Optional<Produto> produto = produtoRepository.findById(producao.getProduto().getCodigo());
@@ -94,7 +147,7 @@ public class ProducaoService {
 		else return ResponseEntity.status(HttpStatus.CONFLICT).build();
 	}
 	
-	public List<Producao> porUser(String username){
+	public List<Producao> listarProducaoporUser(String username){
 		Optional<Usuario> usuario = userRepository.findByUsername(username);
 		List<Producao> list = new ArrayList<>();
 		if(usuario.isPresent() == false) return null;
