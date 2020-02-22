@@ -50,9 +50,18 @@ public class PedidoResource {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
 		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
+		lista = pedidoService.contagemVolumes(lista);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/{tipo}/notas")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<List<Pedido>> BuscarPedidoNota(@PathVariable String tipo){
+		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
+		lista = pedidoService.contagemVolumes(lista);
+		lista = pedidoService.modificarParaEmbalagens(lista);
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
+	}
 	
 	@GetMapping("/demandas/{username}")
 	@PreAuthorize("hasAuthority('USER')")
@@ -147,7 +156,7 @@ public class PedidoResource {
 	
 	
 	@DeleteMapping("/{codigo}")
-	@PreAuthorize("hasAnyAuthority ('ADMIN', 'USER')")
+	@PreAuthorize("hasAnyAuthority ('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deletarPedido(@PathVariable Long codigo){
 		pedidoService.deletar(codigo);

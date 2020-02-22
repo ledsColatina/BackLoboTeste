@@ -1,5 +1,6 @@
 package com.LoboProject.domain;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import com.LoboProject.domain.SimpleEnum.Status;
@@ -51,6 +53,8 @@ public class Pedido{
 	@JsonIgnore
 	private String condicoes;
 	
+	@Transient
+	private int volumes =  0;
 	
 	public Long getCodigo() {
 		return codigo;
@@ -157,6 +161,14 @@ public class Pedido{
 
 	public void setCondicoes(String condicoes) {
 		this.condicoes = condicoes;
+	}
+
+	public int getVolumes() {
+		return volumes;
+	}
+
+	public void setVolumes(int volumes) {
+		this.volumes = volumes;
 	}
 
 	

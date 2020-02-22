@@ -267,6 +267,23 @@ public class PedidoService {
 		return lista;
 	}
 	
+	public List<Pedido> logistica(List<Pedido> lista){
+		
+		for(int i =0; i  < lista.size(); i++) {
+			for(int j=0; j < lista.get(i).getItens().size(); j++) {
+				for(int k=0; k < lista.get(i).getItens().size(); k++) {
+					if(i!=0) {
+						if(lista.get(i-1).getItens().get(k).getProduto().getCodigo().equals((lista.get(i).getItens().get(j).getProduto().getCodigo()))) {
+							
+						}
+					}	
+				}
+			}
+		}
+		
+		return lista;
+	}
+	
 	public String DiminuirEmbalagem(long codigoPedido, String codigo, int quantidade) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
 		int i;
@@ -292,6 +309,47 @@ public class PedidoService {
 		return ("OK");
 	}
 	
+	public List<Pedido> contagemVolumes(List<Pedido> lista){
+		for(int i = 0; i < lista.size(); i++) {
+			for(int j = 0; j < lista.get(i).getItens().size(); j++) {
+				if(lista.get(i).getItens().get(j).getProduto().getSetor().getDescricao().equalsIgnoreCase("Embalagem")) {
+					lista.get(i).setVolumes(lista.get(i).getVolumes() + lista.get(i).getItens().get(j).getQuantidade());
+				}
+				else if(!lista.get(i).getItens().get(j).getProduto().getComposicao().isEmpty()) {
+					for(int k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
+						if(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getSetor().equals("Embalagem")) {
+							lista.get(i).setVolumes(lista.get(i).getVolumes() + (int)(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade() * lista.get(i).getItens().get(j).getQuantidade()));
+						}
+					}
+				}
+			}
+		}
+		return lista;
+	}
+	
+	public List<Pedido> modificarParaEmbalagens(List<Pedido> lista){
+		for(int i = 0; i < lista.size(); i++) {
+			for(int j = 0; j < lista.get(i).getItens().size(); j++) {
+				if(!lista.get(i).getItens().get(j).getProduto().getSetor().getDescricao().equalsIgnoreCase("Embalagem")) {
+					lista.get(i).getItens().remove(j);
+					j--;
+				}
+				else if(!lista.get(i).getItens().get(j).getProduto().getComposicao().isEmpty()) {
+					for(int k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
+						if(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getSetor().equals("Embalagem")) {
+							PedidoProduto produto = new PedidoProduto();
+							produto.setPedido(lista.get(i));
+							produto.setProduto(lista.get(i).getItens().get(j).getProduto());
+							produto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
+							lista.get(i).getItens().add(produto);
+						}
+					}
+				}
+			}
+		}
+		
+		return lista;
+	}
 
 	public String DiminuirEmbalagem2(long codigoPedido) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
