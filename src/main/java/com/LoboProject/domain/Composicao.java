@@ -8,8 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import org.codehaus.jackson.annotate.JsonIgnore;
+import lombok.Data;
 
 @Entity
+@Data
 public class Composicao {
 	
 	@Id
@@ -25,40 +27,5 @@ public class Composicao {
 	private Produto produtoParte;
 	
 	private String id_produto_todo;
-	
 
-	public Long getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Long quantidade) {
-		this.quantidade = quantidade;
-	}
-
-	public Produto getProdutoParte() {
-		return produtoParte;
-	}
-
-	public void setProdutoParte(Produto produtoParte) {
-		this.produtoParte = produtoParte;
-	}
-	
-	@JsonIgnore
-	public Long getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(Long codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getId_produto_todo() {
-		return id_produto_todo;
-	}
-
-	public void setId_produto_todo(String id_produto_todo) {
-		this.id_produto_todo = id_produto_todo;
-	}
-	
-	
 }

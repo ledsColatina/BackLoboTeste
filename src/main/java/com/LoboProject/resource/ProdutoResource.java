@@ -37,13 +37,13 @@ public class ProdutoResource {
 	
 	
 	@GetMapping
-	public ResponseEntity<List<Produto>> listarProduto(){
+	public ResponseEntity<List<Produto>> listarProdutos(){
 		List<Produto> produto = produtoRepository.findAll();
 		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/resumo")
-	public ResponseEntity<List<ResumoProduto>> resumir(){
+	public ResponseEntity<List<ResumoProduto>> resumirProdutos(){
 		List<ResumoProduto> produto = produtoRepository.resumir();
 		return !produto.isEmpty() ? ResponseEntity.ok(produto) : ResponseEntity.noContent().build();
 	}
@@ -93,7 +93,7 @@ public class ProdutoResource {
 	}
 	
 	
-	@PostMapping()
+	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> criarProduto(@Valid @RequestBody Produto produto, HttpServletResponse response) {
 		produto = produtoService.formatarProduto(produto);
@@ -104,6 +104,19 @@ public class ProdutoResource {
 			return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Código Repetido!!");
 		}
 		
+	}
+	
+	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<?> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
+		return produtoService.atualizarProduto(produto, id);
+	}
+	
+	
+	@PutMapping("/{id}/{quantidadeAtual}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	public ResponseEntity<Produto> registrarProducao(@PathVariable String id,@PathVariable Long quantidadeAtual){
+		return produtoService.decrementosQuantidadeAtual(id, quantidadeAtual);
 	}
 	
 	
@@ -123,18 +136,4 @@ public class ProdutoResource {
 		produtoService.deletarLoteProduto(produtos);
 	}
 	
-
-	@PutMapping("/{id}")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<?> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
-		return produtoService.atualizarProduto(produto, id);
-	}
-	
-	
-	@PutMapping("/{id}/{quantidadeAtual}")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<Produto> registrarProducao(@PathVariable String id,@PathVariable Long quantidadeAtual){
-		return produtoService.decrementosQuantidadeAtual(id, quantidadeAtual);
-	}
-
 }

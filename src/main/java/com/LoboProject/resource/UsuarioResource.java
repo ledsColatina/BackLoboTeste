@@ -46,7 +46,7 @@ public class UsuarioResource {
 	}
 
 	
-	@PostMapping()
+	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Usuario> CriarUsuario(@RequestBody Usuario user) {
 		return usuarioService.CriarUsuario(user);

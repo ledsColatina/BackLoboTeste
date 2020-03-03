@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import lombok.Data;
 
 @ControllerAdvice
 public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
@@ -80,6 +81,7 @@ public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	
 	//CLASSE ERROR
+	@Data
 	public static class Erro{	// Classe_para tratamento_de_Erros_Usuário/_Desenvolvedor
 		private String mensagemUsuario;
 		private String mensagemDesenvolvedor;
@@ -88,24 +90,6 @@ public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
 			this.mensagemUsuario = mensagemUsuario;
 			this.mensagemDesenvolvedor = mensagemDesenvolvedor;
 		}
-
-		public String getMensagemUsuario() {
-			return mensagemUsuario;
-		}
-
-		public void setMensagemUsuario(String mensagemUsuario) {
-			this.mensagemUsuario = mensagemUsuario;
-		}
-
-		public String getMensagemDesenvolvedor() {
-			return mensagemDesenvolvedor;
-		}
-
-		public void setMensagemDesenvolvedor(String mensagemDesenvolvedor) {
-			this.mensagemDesenvolvedor = mensagemDesenvolvedor;
-		}
-		
-		
 		
 	}
 }

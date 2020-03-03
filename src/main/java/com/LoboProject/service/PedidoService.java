@@ -47,7 +47,7 @@ public class PedidoService {
 			return null;
 		}
 	}
-	
+
 	public List<Pedido> listarSeparadamentePrioridade(String string){
 		List<Pedido> lista = pedidorepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
 		
@@ -56,7 +56,6 @@ public class PedidoService {
 				lista.remove(i);
 			}
 		}
-		
 		return lista;
 	}
 	
@@ -217,8 +216,6 @@ public class PedidoService {
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setPedido(lista.get(i));
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-					/*pedidoProduto.setQuantidade((int) ((lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getQuantidadeAtual() - lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-					* lista.get(i).getItens().get(j).getQuantidade())) * -1);*/
 					pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
 							* lista.get(i).getItens().get(j).getQuantidade()));
 					if((pedidoProduto.getQuantidade() >=  0)) {
@@ -289,9 +286,7 @@ public class PedidoService {
 		int i;
 		for(i = 0; i < pedido.get().getItens().size(); i++){
 			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
-			if((prod.get().getQuantidadeAtual() - quantidade) >= 0){
-				//prod.get().setQuantidadeAtual(prod.get().getQuantidadeAtual() - quantidade);
-			}else {
+			if((prod.get().getQuantidadeAtual() - quantidade) < 0){
 				return ("Produto Insuficiente");
 			}
 		}

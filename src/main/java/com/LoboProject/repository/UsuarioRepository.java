@@ -10,6 +10,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	
 	public void deleteByUsername(String username);
 
-	
-	
 }

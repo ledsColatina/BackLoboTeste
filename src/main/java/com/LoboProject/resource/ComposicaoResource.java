@@ -20,7 +20,7 @@ import com.LoboProject.service.ComposicaoService;
 public class ComposicaoResource {
 
 	@Autowired
-	private ComposicaoRepository composicaorepository;
+	private ComposicaoRepository composicaoRepository;
 	
 	@Autowired
 	private ComposicaoService composicaoService;
@@ -28,43 +28,43 @@ public class ComposicaoResource {
 	@GetMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<List<Composicao>> listarComposicao(){
-		List<Composicao> composicao = composicaorepository.findAll();
+		List<Composicao> composicao = composicaoRepository.findAll();
 		return !composicao.isEmpty() ? ResponseEntity.ok(composicao) : ResponseEntity.noContent().build();
 	}
 	
 
 	@GetMapping("/resumo")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<List<ResumoComposicao>> resumo(){
-		List<ResumoComposicao> composicao = composicaorepository.resumir();
+	public ResponseEntity<List<ResumoComposicao>> resumoComposicao(){
+		List<ResumoComposicao> composicao = composicaoRepository.resumir();
 		return !composicao.isEmpty() ? ResponseEntity.ok(composicao) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> listarComposicaoCod(@PathVariable Long codigo){
-		Optional<Composicao> composicao = composicaorepository.findById(codigo);
+		Optional<Composicao> composicao = composicaoRepository.findById(codigo);
 		return composicao.isPresent() ? ResponseEntity.ok(composicao) : ResponseEntity.notFound().build() ;
 	}
 	
 	
-	@PostMapping()
+	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public List<Composicao> criarComposicao(@Valid @RequestBody List<Composicao> composicao, HttpServletResponse response) {
 		return composicaoService.criarComposicao(composicao);
-	}
-	
-	@DeleteMapping("/{codigo}")
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deletarComposicao(@PathVariable Long codigo){
-		composicaorepository.deleteById(codigo);
 	}
 	
 	@PutMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Composicao> atualizarSetor(@PathVariable Long codigo, @Valid @RequestBody Composicao composicao){
 		return composicaoService.atualizarComposicao(codigo, composicao);
+	}
+	
+	@DeleteMapping("/{codigo}")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deletarComposicao(@PathVariable Long codigo){
+		composicaoRepository.deleteById(codigo);
 	}
 	
 }
