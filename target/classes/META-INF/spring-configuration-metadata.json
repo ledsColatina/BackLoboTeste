@@ -8,7 +8,8 @@
     {
       "name": "lobo.seguranca",
       "type": "com.LoboProject.config.property.loboApiProperty$Seguranca",
-      "sourceType": "com.LoboProject.config.property.loboApiProperty"
+      "sourceType": "com.LoboProject.config.property.loboApiProperty",
+      "sourceMethod": "public com.LoboProject.config.property.loboApiProperty.Seguranca getSeguranca() "
     }
   ],
   "properties": [

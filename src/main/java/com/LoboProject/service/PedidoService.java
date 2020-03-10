@@ -96,7 +96,6 @@ public class PedidoService {
 	
 	public long listarultimaprioridade() {
 		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
-		System.out.println("\n\n oioioi\n");
 		if(ultimo.isPresent()) {
 			System.out.println("passei " + ultimo.get().getCodigo() + "  " + ultimo.get().getPrioridade());
 			return ultimo.get().getPrioridade();
@@ -205,7 +204,7 @@ public class PedidoService {
 
 	}
 	
-	public List<Pedido> quebrarDemandas(List<Pedido> lista){
+	public List<Pedido> quebrarDemandas(List<Pedido> lista, String username){
 		int i,j, k;
 		for(i = 0; i < lista.size(); i++) {
 			for(j = 0 ; j < lista.get(i).getItens().size();j++) {
@@ -231,19 +230,25 @@ public class PedidoService {
 	
 	
 	
-	public List<Pedido> formatarTirandoRepetidos(List<Pedido> lista ){
+	public List<Pedido> formatarTirandoRepetidos(List<Pedido> lista, String username ){
 		for(int i = 0; i < lista.size(); i++) {
-			lista.get(i).setItens(formatarComposicao(lista.get(i).getItens()));
+			lista.get(i).setItens(formatarComposicao(lista.get(i).getItens(), username));
 		}
 		return lista;
 	}
 	
-	public List<PedidoProduto> formatarComposicao(List<PedidoProduto> lista){
+	public List<PedidoProduto> formatarComposicao(List<PedidoProduto> lista, String username){
+		Optional<Usuario> usuario = userRepository.findByUsername(username);
 		for(int i = 0; i < lista.size(); i++) {
 			for(int j = 0;  j < lista.size(); j++) {
-				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
-					lista.get(j).setQuantidade(lista.get(j).getQuantidade()+ lista.get(i).getQuantidade());
+				if((lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j))) {
+					lista.get(j).setQuantidade((lista.get(j).getQuantidade() + lista.get(i).getQuantidade() - lista.get(j).getQuantidade()));
 					lista.remove(i);
+					if(i > 0) i--;
+				}
+				else if((!usuario.get().getSetores().contains(lista.get(j).getProduto().getSetor()) && (!usuario.get().isTipo()))) {
+					lista.remove(j);
+					if(j > 0)	j--;
 				}
 			}
 		}
@@ -372,7 +377,7 @@ public class PedidoService {
 		return 1;
 	}
 	
-	public List<Pedido> estoqueMin(){
+	public List<Pedido> estoqueMin(String username){
 		Pedido pedido = new Pedido();
 		pedido.setCodigo((long) 909090);
 		pedido.setNomeCliente("Estoque Minimo");
@@ -392,8 +397,21 @@ public class PedidoService {
 		pedido.setItens(itens);
 		List<Pedido> pedidos = new ArrayList<>();
 		pedidos.add(pedido);
-		pedidos = quebrarDemandas(pedidos);
+		pedidos = quebrarDemandas(pedidos, username);
 		return pedidos;
+	}
+	
+	public List<Pedido> quebrarEstoqueMinPorSetor(List<Pedido> estoqueMin, String username){
+		Optional<Usuario> usuario = userRepository.findByUsername(username);
+		for(int i=0; i < estoqueMin.get(estoqueMin.size()-1).getItens().size(); i++) {
+			if(!usuario.get().getSetores().contains(estoqueMin.get(estoqueMin.size()-1).getItens().get(i).getProduto().getSetor())){
+				estoqueMin.get(estoqueMin.size()-1).getItens().remove(i);
+				if(i > 1) {
+					i--;
+				}	
+			}
+		}
+		return estoqueMin;
 	}
 	
 }

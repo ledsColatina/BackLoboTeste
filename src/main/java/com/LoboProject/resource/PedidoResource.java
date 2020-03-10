@@ -70,9 +70,10 @@ public class PedidoResource {
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
 		}
-		lista.addAll(pedidoService.estoqueMin());
-		lista = pedidoService.quebrarDemandas(lista);
-		lista = pedidoService.formatarTirandoRepetidos(lista);
+		lista.addAll(pedidoService.estoqueMin(username));
+		//lista = pedidoService.quebrarEstoqueMinPorSetor(lista, username);
+		lista = pedidoService.quebrarDemandas(lista, username);
+		lista = pedidoService.formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
