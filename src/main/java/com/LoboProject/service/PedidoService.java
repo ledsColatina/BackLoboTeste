@@ -15,6 +15,7 @@ import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.repository.ProdutoRepository;
+import com.LoboProject.repository.SetorRepository;
 import com.LoboProject.repository.UsuarioRepository;
 
 @Service
@@ -31,6 +32,9 @@ public class PedidoService {
 	
 	@Autowired
 	private UsuarioRepository userRepository;
+	
+	@Autowired
+	private SetorRepository setorRepository;
 	
 	public List<Pedido> listarSeparadamente(String string){
 		if(string.equals("FILA")) {
@@ -197,6 +201,8 @@ public class PedidoService {
 			}
 			if(usuario.get().isTipo() == true) {
 				list = pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, codigo);
+			}else if (!usuario.get().getSetores().contains(setorRepository.findBydescricao("Montagem"))) {
+				list.addAll(pedidoProdutoRepository.findByPedido_statusAndProduto_Setor_id(SimpleEnum.Status.EM_PRODUCAO,(long) 3));
 			}
 			
 		}
@@ -217,9 +223,9 @@ public class PedidoService {
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
 					pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
 							* lista.get(i).getItens().get(j).getQuantidade()));
-					if((pedidoProduto.getQuantidade() >=  0)) {
+					//if((pedidoProduto.getQuantidade() >=  0)) {
 						lista.get(i).getItens().add(pedidoProduto);	
-					}
+					//}
 					
 				}
 			}
@@ -238,21 +244,28 @@ public class PedidoService {
 	}
 	
 	public List<PedidoProduto> formatarComposicao(List<PedidoProduto> lista, String username){
-		Optional<Usuario> usuario = userRepository.findByUsername(username);
 		for(int i = 0; i < lista.size(); i++) {
 			for(int j = 0;  j < lista.size(); j++) {
 				if((lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j))) {
-					lista.get(j).setQuantidade((lista.get(j).getQuantidade() + lista.get(i).getQuantidade() - lista.get(j).getQuantidade()));
+					lista.get(j).setQuantidade((lista.get(j).getQuantidade() + lista.get(i).getQuantidade()));
 					lista.remove(i);
-					if(i > 0) i--;
-				}
-				else if((!usuario.get().getSetores().contains(lista.get(j).getProduto().getSetor()) && (!usuario.get().isTipo()))) {
-					lista.remove(j);
-					if(j > 0)	j--;
+					if(i > 0)i--;
 				}
 			}
 		}
+		lista = deixarApenasdoSetor(lista, username);
+		return lista;
+	}
+	
+	public List<PedidoProduto> deixarApenasdoSetor(List<PedidoProduto> lista, String username){
+		Optional<Usuario> usuario = userRepository.findByUsername(username);
 		
+		for(int i =0; i < lista.size(); i++) {
+			if((!usuario.get().getSetores().contains(lista.get(i).getProduto().getSetor()) && (!usuario.get().isTipo()))) {
+				lista.remove(i);
+				i--;
+			}
+		}
 		return lista;
 	}
 	
@@ -262,23 +275,6 @@ public class PedidoService {
 				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
 					lista.remove(j);
 					j--;
-				}
-			}
-		}
-		
-		return lista;
-	}
-	
-	public List<Pedido> logistica(List<Pedido> lista){
-		
-		for(int i =0; i  < lista.size(); i++) {
-			for(int j=0; j < lista.get(i).getItens().size(); j++) {
-				for(int k=0; k < lista.get(i).getItens().size(); k++) {
-					if(i!=0) {
-						if(lista.get(i-1).getItens().get(k).getProduto().getCodigo().equals((lista.get(i).getItens().get(j).getProduto().getCodigo()))) {
-							
-						}
-					}	
 				}
 			}
 		}
@@ -401,17 +397,5 @@ public class PedidoService {
 		return pedidos;
 	}
 	
-	public List<Pedido> quebrarEstoqueMinPorSetor(List<Pedido> estoqueMin, String username){
-		Optional<Usuario> usuario = userRepository.findByUsername(username);
-		for(int i=0; i < estoqueMin.get(estoqueMin.size()-1).getItens().size(); i++) {
-			if(!usuario.get().getSetores().contains(estoqueMin.get(estoqueMin.size()-1).getItens().get(i).getProduto().getSetor())){
-				estoqueMin.get(estoqueMin.size()-1).getItens().remove(i);
-				if(i > 1) {
-					i--;
-				}	
-			}
-		}
-		return estoqueMin;
-	}
 	
 }

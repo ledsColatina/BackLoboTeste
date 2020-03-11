@@ -68,10 +68,9 @@ public class PedidoResource {
 	public ResponseEntity<List<Pedido>> buscarDemandas(@PathVariable String username){
 		List <Pedido> lista = pedidoService.listarSeparadamente("EM_PRODUCAO");
 		for(int i = 0; i < lista.size(); i++) {
-			lista.get(i).setItens(pedidoService.filtroPorUserSetor(username, lista.get(i).getCodigo()));
+			lista.get(i).setItens(pedidoProdutorepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
 		lista.addAll(pedidoService.estoqueMin(username));
-		//lista = pedidoService.quebrarEstoqueMinPorSetor(lista, username);
 		lista = pedidoService.quebrarDemandas(lista, username);
 		lista = pedidoService.formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
