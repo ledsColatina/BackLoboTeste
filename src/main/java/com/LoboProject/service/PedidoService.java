@@ -190,6 +190,7 @@ public class PedidoService {
 
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public List<PedidoProduto> filtroPorUserSetor(String username, Long codigo){
 		Optional<Usuario> usuario = userRepository.findByUsername(username);
 		List<PedidoProduto> list = new ArrayList<>();

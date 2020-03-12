@@ -2,7 +2,6 @@ package com.LoboProject.resource;
 
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,9 +46,9 @@ public class SetorResource {
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<?> CriarSetor(@Valid @RequestBody Setor setor, HttpServletResponse response) {
-		Setor setorSalvo = setorRepository.findBydescricao(setor.getDescricao());
-		return !setorSalvo.equals(null) ? ResponseEntity.ok().body(setorSalvo) : ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Setor com Descrição Repetida!!");
+	public ResponseEntity<?> CriarSetor(@RequestBody Setor setor) {
+		Optional<Setor> setorSalvo = setorRepository.findBydescricao(setor.getDescricao());
+		return !setorSalvo.isPresent() ? ResponseEntity.ok().body(setorRepository.save(setor)) : ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Setor com Descrição Repetida!!");
 	}
 
 	
