@@ -39,6 +39,7 @@ public class ProducaoService {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 	
+	
 	//Agrupa_Pedidos_por_Data_e_Setor_para_gerar_relatório
 	public List<Relatorios> agruparComUltimosDiasPorSetor(){
 		List<Producao> producoes = producaoRepository.findByUltimasProducoes();

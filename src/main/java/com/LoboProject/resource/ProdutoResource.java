@@ -1,6 +1,5 @@
 package com.LoboProject.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -11,10 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.LoboProject.Projection.ResumoProduto;
 import com.LoboProject.domain.Produto;
-import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
-import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.ProdutoService;
 
 
@@ -30,9 +27,6 @@ public class ProdutoResource {
 	
 	@Autowired
 	private ProdutoService produtoService;
-	
-	@Autowired
-	private UsuarioRepository usuarioRepository;
 	
 	
 	@GetMapping
@@ -66,22 +60,8 @@ public class ProdutoResource {
 	}
 	
 	@GetMapping("/user/{username}")
-	public ResponseEntity<List<Produto>> buscarporUser(@PathVariable String username){
-		Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
-		List<Produto> list = new ArrayList<>();
-		int i;
-		if(usuario.isPresent() == false) return null;
-		else {
-			for(i = 0; i < usuario.get().getSetores().size(); i++) {
-				list.addAll( produtoRepository.findBySetor_id(usuario.get().getSetores().get(i).getId()));
-			}
-			if(usuario.get().isTipo() == true) {
-				list = produtoRepository.findAll();
-				return !list.isEmpty() ? ResponseEntity.ok(list) : ResponseEntity.noContent().build();
-			}
-			
-		}
-		return !list.isEmpty() ? ResponseEntity.ok(list) : ResponseEntity.noContent().build();
+	public ResponseEntity<List<Produto>> buscarProdutosporUser(@PathVariable String username){
+		return produtoService.ProcessoCompletoGetProdutosUser(username);
 	}
 	
 	
@@ -95,14 +75,7 @@ public class ProdutoResource {
 	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<?> criarProduto(@RequestBody Produto produto) {
-		produto = produtoService.formatarProduto(produto);
-		if(produto == null) return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Descrição Repetida!!");
-		if((produtoService.verificarCodigo(produto) != null)&&(produto != null)) {
-			return ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto));
-		}else {
-			return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Código Repetido!!");
-		}
-		
+		return produtoService.ProcessoCompletoCadastroProduto(produto);
 	}
 	
 	@PutMapping("/{id}")
