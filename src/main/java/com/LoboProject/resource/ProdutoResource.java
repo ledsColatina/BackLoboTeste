@@ -3,7 +3,6 @@ package com.LoboProject.resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -95,11 +94,11 @@ public class ProdutoResource {
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<?> criarProduto(@Valid @RequestBody Produto produto, HttpServletResponse response) {
+	public ResponseEntity<?> criarProduto(@RequestBody Produto produto) {
 		produto = produtoService.formatarProduto(produto);
-		if(produtoService.verificarCodigo(produto) != null) {
-			if (produto!=null) return ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto));
-			else return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Descrição Repetida!!");
+		if(produto == null) return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Descrição Repetida!!");
+		if((produtoService.verificarCodigo(produto) != null)&&(produto != null)) {
+			return ResponseEntity.status(HttpStatus.OK).body(produtoRepository.save(produto));
 		}else {
 			return ResponseEntity.badRequest().body("\n Não foi possível Cadastrar, Produto com Código Repetido!!");
 		}
