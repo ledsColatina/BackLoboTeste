@@ -212,7 +212,7 @@ public class PedidoService {
 	}
 	
 	public List<Pedido> quebrarDemandas(List<Pedido> lista, String username){
-		int i,j, k;
+		int i,j, k, index = 0;
 		for(i = 0; i < lista.size(); i++) {
 			for(j = 0 ; j < lista.get(i).getItens().size();j++) {
 				for(k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
@@ -222,12 +222,16 @@ public class PedidoService {
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setPedido(lista.get(i));
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-					pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-							* lista.get(i).getItens().get(j).getQuantidade()));
-					//if((pedidoProduto.getQuantidade() >=  0)) {
-						lista.get(i).getItens().add(pedidoProduto);	
+				//	if(i == 0) {
+						pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
+								* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
+					//}else {
+						//if(lista.get(i-1).getItens().contains(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte()))
+						//	index = lista.get(i).getItens().indexOf(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
+						//	pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
+						//		* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() - lista.get(i).getItens().get(index).getQuantidade()))));
 					//}
-					
+					lista.get(i).getItens().add(pedidoProduto);		
 				}
 			}
 		}
@@ -363,6 +367,11 @@ public class PedidoService {
 		return ("OK");
 	}
 	
+	public List<Pedido> ordernarPorPrioridade(List<Pedido> lista){
+		lista = pedidorepository.findByStatusAndPrioridade();
+		return lista;
+	}
+	
 	@Transactional
 	public int deletar(long codigo) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigo);
@@ -388,7 +397,7 @@ public class PedidoService {
 			PedidoProduto item = new PedidoProduto();
 			item.setProduto(lista.get(i));
 			item.setPedido(pedido);
-			item.setQuantidade(-(int)(lista.get(i).getQuantidadeAtual() - lista.get(i).getQuantidadeMin()));
+			item.setQuantidade(lista.get(i).getQuantidadeMin().intValue());
 			itens.add(item);
 		}
 		pedido.setItens(itens);

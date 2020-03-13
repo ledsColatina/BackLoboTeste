@@ -2,7 +2,6 @@ package com.LoboProject.resource;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,7 +58,7 @@ public class ProducaoResource {
 	
 	@PostMapping
 	@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
-	public  ResponseEntity<?> criarProducao(@Valid @RequestBody Producao producao, HttpServletResponse response) {
+	public  ResponseEntity<?> criarProducao(@RequestBody Producao producao, HttpServletResponse response) {
 		return producaoService.criarProducao(producao);
 	}
 	

@@ -2,7 +2,6 @@ package com.LoboProject.resource;
 
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,7 +79,7 @@ public class ProdutoResource {
 	
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
-	public ResponseEntity<?> atualizarProduto(@PathVariable String id,@Valid @RequestBody Produto produto){
+	public ResponseEntity<?> atualizarProduto(@PathVariable String id,@RequestBody Produto produto){
 		return produtoService.atualizarProduto(produto, id);
 	}
 	

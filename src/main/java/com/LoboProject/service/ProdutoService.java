@@ -35,7 +35,7 @@ public class ProdutoService {
 		String codigo = produto.getCodigo().toLowerCase();
 		produto.setCodigo(codigo);
 		if(produtoRepository.findBydescricao(produto.getDescricao())!= null) return null;
-		if(produto.getSetor().isBase() == true) produto.setComposicao(null);
+		//if(produto.getSetor().isBase() == true) produto.setComposicao(null);
 		return produto;
 	}
 	
@@ -94,9 +94,9 @@ public class ProdutoService {
 				if((produto.getComposicao().get(i).getQuantidade() <= 0)) {
 					return 0;
 				}
-				if(!produtos.contains(produto.getComposicao().get(i).getProdutoParte())) {
+				/*if(!produtos.contains(produto.getComposicao().get(i).getProdutoParte())) {
 					return -1;
-				}
+				}*/
 			}
 		}
 		return 1;

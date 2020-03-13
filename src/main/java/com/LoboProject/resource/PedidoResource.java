@@ -47,7 +47,7 @@ public class PedidoResource {
 	private ProdutoService produtoService;
 	
 	@GetMapping("/{tipo}")
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'GERÊNCIA DE PRODUÇÃO', 'USER')")
 	public ResponseEntity<List<Pedido>> BuscarPedido(@PathVariable String tipo){
 		List<Pedido> lista = pedidoService.listarSeparadamente(tipo);
 		lista = pedidoService.contagemVolumes(lista);
@@ -70,6 +70,7 @@ public class PedidoResource {
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoProdutorepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
+		lista = pedidoService.ordernarPorPrioridade(lista);
 		lista.addAll(pedidoService.estoqueMin(username));
 		lista = pedidoService.quebrarDemandas(lista, username);
 		lista = pedidoService.formatarTirandoRepetidos(lista, username);
