@@ -20,4 +20,5 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long>{
 	
 	@Query(value = " select * from pedido where pedido.status = 1 ORDER BY pedido.Prioridade Asc", nativeQuery = true)
 	List<Pedido> findByStatusAndPrioridade();
+	
 }

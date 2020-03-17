@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.LoboProject.domain.Pedido;
 import com.LoboProject.domain.PedidoProduto;
 import com.LoboProject.domain.PedidoProdutoKey;
@@ -211,8 +214,9 @@ public class PedidoService {
 
 	}
 	
+
 	public List<Pedido> quebrarDemandas(List<Pedido> lista, String username){
-		int i,j, k, index = 0;
+		int i,j, k;
 		for(i = 0; i < lista.size(); i++) {
 			for(j = 0 ; j < lista.get(i).getItens().size();j++) {
 				for(k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
@@ -220,18 +224,25 @@ public class PedidoService {
 					chave.setPedidoCodigo(lista.get(i).getCodigo());
 					chave.setProdutoCodigo(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getCodigo());
 					PedidoProduto pedidoProduto = new PedidoProduto();
+					pedidoProduto.setVisible(1);
 					pedidoProduto.setPedido(lista.get(i));
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-				//	if(i == 0) {
-						pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-								* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
-					//}else {
-						//if(lista.get(i-1).getItens().contains(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte()))
-						//	index = lista.get(i).getItens().indexOf(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-						//	pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-						//		* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() - lista.get(i).getItens().get(index).getQuantidade()))));
-					//}
-					lista.get(i).getItens().add(pedidoProduto);		
+					if(i == 0) {
+						if(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() < lista.get(i).getItens().get(j).getQuantidade()) {
+							pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
+									* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
+							lista.get(i).getItens().add(pedidoProduto);
+						}	
+					}else {
+							pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
+									* (lista.get(i).getItens().get(j).getQuantidade())));
+							lista.get(i).getItens().add(pedidoProduto);
+					}
+					if(pedidoProduto.getQuantidade() < pedidoProduto.getProduto().getQuantidadeAtual()) {
+						//lista.get(i).getItens().remove(pedidoProduto);
+						lista.get(i).getItens().get(lista.get(i).getItens().indexOf(pedidoProduto)).setVisible(0);
+					}
+					
 				}
 			}
 		}
@@ -286,6 +297,27 @@ public class PedidoService {
 		
 		return lista;
 	}
+	
+	public ResponseEntity<List<Pedido>> buscarDemandas(@PathVariable String username){
+		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
+		for(int i = 0; i < lista.size(); i++) {
+			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
+		}
+		lista = ordernarPorPrioridade(lista);
+		lista.addAll(estoqueMin(username));
+		lista = quebrarDemandas(lista, username);
+		lista = formatarTirandoRepetidos(lista, username);
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
+	}
+	
+	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
+		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
+		List<Pedido> aux = buscarDemandas(username).getBody();
+		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
+		lista = formatarComposicaoSemSomar(lista);
+		return ResponseEntity.ok().body(lista);
+	}
+	
 	
 	public String DiminuirEmbalagem(long codigoPedido, String codigo, int quantidade) {
 		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
@@ -403,7 +435,7 @@ public class PedidoService {
 		pedido.setItens(itens);
 		List<Pedido> pedidos = new ArrayList<>();
 		pedidos.add(pedido);
-		pedidos = quebrarDemandas(pedidos, username);
+		//pedidos = quebrarDemandas(pedidos, username);
 		return pedidos;
 	}
 	

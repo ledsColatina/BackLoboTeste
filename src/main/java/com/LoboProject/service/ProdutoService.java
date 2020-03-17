@@ -88,15 +88,11 @@ public class ProdutoService {
 	}
 	
 	public int verificarComposicao(Produto produto) {
-		List<Produto> produtos = produtoRepository.findAll();
 		if(!produto.getComposicao().isEmpty()) {
 			for(int i =0 ; i< produto.getComposicao().size(); i++) {
 				if((produto.getComposicao().get(i).getQuantidade() <= 0)) {
 					return 0;
 				}
-				/*if(!produtos.contains(produto.getComposicao().get(i).getProdutoParte())) {
-					return -1;
-				}*/
 			}
 		}
 		return 1;

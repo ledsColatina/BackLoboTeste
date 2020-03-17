@@ -1,6 +1,5 @@
 package com.LoboProject.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,25 +65,13 @@ public class PedidoResource {
 	@GetMapping("/demandas/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<Pedido>> buscarDemandas(@PathVariable String username){
-		List <Pedido> lista = pedidoService.listarSeparadamente("EM_PRODUCAO");
-		for(int i = 0; i < lista.size(); i++) {
-			lista.get(i).setItens(pedidoProdutorepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
-		}
-		lista = pedidoService.ordernarPorPrioridade(lista);
-		lista.addAll(pedidoService.estoqueMin(username));
-		lista = pedidoService.quebrarDemandas(lista, username);
-		lista = pedidoService.formatarTirandoRepetidos(lista, username);
-		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
+		return pedidoService.buscarDemandas(username);
 	}
 	
 	@GetMapping("/demandasProd/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
-		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List<Pedido> aux = buscarDemandas(username).getBody();
-		for(int i = 0; i < aux.size(); i++)  lista.addAll(pedidoService.atualizarQtdP(aux.get(i).getItens()));
-		lista = pedidoService.formatarComposicaoSemSomar(lista);
-		return ResponseEntity.ok().body(lista);
+		return pedidoService.buscarDemandasProduto(username);
 	}
 	
 	@GetMapping("/estoque/{id_produto_parte}")
