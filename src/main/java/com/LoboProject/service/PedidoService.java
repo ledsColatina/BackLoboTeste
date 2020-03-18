@@ -239,7 +239,6 @@ public class PedidoService {
 							lista.get(i).getItens().add(pedidoProduto);
 					}
 					if(pedidoProduto.getQuantidade() < pedidoProduto.getProduto().getQuantidadeAtual()) {
-						//lista.get(i).getItens().remove(pedidoProduto);
 						lista.get(i).getItens().get(lista.get(i).getItens().indexOf(pedidoProduto)).setVisible(0);
 					}
 					
