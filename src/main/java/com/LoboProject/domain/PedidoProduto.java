@@ -34,6 +34,15 @@ public class PedidoProduto implements Serializable{
     private int quantidade;
     
     @Transient
+    private int produzir = 0;
+    
+    @Transient
+    private int quantidadeTotalPedidos = 0;
+    
+    @Transient
+    private int quantidadeTotalEstoqueMin = 0;
+    
+    @Transient
     private int visible = 1;
     
     
