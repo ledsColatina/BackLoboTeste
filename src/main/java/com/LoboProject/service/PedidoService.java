@@ -162,14 +162,17 @@ public class PedidoService {
 			lista.get(i).getProduto().setQuantidadeAtual(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
 			lista.get(i).getProduto().setQuantidadeAcumulada(-(lista.get(i).getProduto().getQuantidadeAtual() + lista.get(i).getProduto().getQuantidadeMin()));
 			lista.get(i).setQuantidadeTotalPedidos((int) (lista.get(i).getProduto().getQuantidadeAcumulada() + 0));
-			if(lista.get(i).getProduto().getQuantidadeAtual() >= 0) {
-				lista.remove(i);
-				i--;
-				//  lista.get(i).getProduto().setQuantidadeAtual((long)0);
-			}
-			if((-(lista.get(i).getProduto().getQuantidadeAtual()) > lista.get(i).getProduto().getQuantidadeMin()) && (lista.get(i).getProduto().getQuantidadeAcumulada() > 0)) {
+			
+			if((-(lista.get(i).getProduto().getQuantidadeAtual()) > lista.get(i).getProduto().getQuantidadeMin()) && (lista.get(i).getProduto().getQuantidadeAcumulada() > lista.get(i).getProduto().getQuantidadeMin())) {
 				lista.get(i).getProduto().setQuantidadeAtual((lista.get(i).getProduto().getQuantidadeAtual() - lista.get(i).getProduto().getQuantidadeMin()));
 			}
+			
+			if(lista.get(i).getProduto().getQuantidadeAtual() >= 0) {
+				//lista.remove(i);
+				//i--;
+				lista.get(i).getProduto().setQuantidadeAtual((long)0);
+			}
+			
 		}
 
 		for(int i = 0; i < lista.size(); i++) {
