@@ -159,7 +159,6 @@ public class PedidoService {
 		for(int i = 0; i < lista.size(); i++) {
 			//lista.get(i).setQuantidadeTotalPedidos(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
 			lista.get(i).getProduto().setQuantidadeAtual(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
-			lista.get(i).getProduto().setQuantidadeMin(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual());
 			if(lista.get(i).getProduto().getQuantidadeAtual() >= 0) {
 				lista.remove(i);
 				i--;
