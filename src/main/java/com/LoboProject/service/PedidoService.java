@@ -158,8 +158,8 @@ public class PedidoService {
 	public List<PedidoProduto> atualizarQtdP (List<PedidoProduto> lista){
 		for(int i = 0; i < lista.size(); i++) {
 			//lista.get(i).setQuantidadeTotalPedidos(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
-			lista.get(i).getProduto().setQuantidadeAtual(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
-			if(lista.get(i).getProduto().getQuantidadeAtual() >= 0) {
+			lista.get(i).getProduto().setQuantidadeAcumulada(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
+			if(lista.get(i).getProduto().getQuantidadeAcumulada() >= 0) {
 				lista.remove(i);
 				i--;
 			}
@@ -230,6 +230,7 @@ public class PedidoService {
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
 					pedidoProduto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
 					pedidoProduto.setQuantidadeTotalEstoqueMin((int)(pedidoProduto.getProduto().getQuantidadeMin() - 0));
+					//pedidoProduto.setProduzir(lista.contains(o));
 					lista.get(i).getItens().add(pedidoProduto);
 					/*if(i == 0) {
 						if(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() < lista.get(i).getItens().get(j).getQuantidade()) {
