@@ -160,7 +160,7 @@ public class PedidoService {
 			
 			lista.get(i).setQuantidadeTotalEstoqueMin((int) (lista.get(i).getProduto().getQuantidadeMin() + 0));
 			lista.get(i).getProduto().setQuantidadeAtual(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() - lista.get(i).getQuantidade());
-			lista.get(i).setQuantidadeTotalPedidos((int)( produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeAtual() + lista.get(i).getProduto().getQuantidadeMin()));
+			lista.get(i).setQuantidadeTotalPedidos((int)(lista.get(i).getProduto().getQuantidadeAtual() + lista.get(i).getProduto().getQuantidadeMin()));
 			if(lista.get(i).getProduto().getQuantidadeAtual() >= 0) {
 				lista.remove(i);
 				i--;
