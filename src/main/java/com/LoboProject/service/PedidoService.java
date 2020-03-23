@@ -155,10 +155,20 @@ public class PedidoService {
 		return prioridade;
 	}
 	
+	public List<PedidoProduto> estoqueMinParaDemandas(List<PedidoProduto> listaCompleta, List<PedidoProduto> listaEstoque){
+		for(int i = 0; i < listaEstoque.size(); i++) {
+			listaEstoque.get(i).setQuantidadeTotalEstoqueMin(listaEstoque.get(i).getQuantidade());
+			listaEstoque.get(i).setQuantidade(0);
+			listaEstoque.get(i).getProduto().setQuantidadeAcumulada((long) -2);	
+		}
+		listaCompleta.addAll(listaEstoque);
+		
+		return listaCompleta;
+	}
+	
 	public List<PedidoProduto> atualizarQtdP (List<PedidoProduto> lista){
 
 		for(int i = 0; i < lista.size(); i++) {
-			
 			lista.get(i).setQuantidadeTotalEstoqueMin((int) (lista.get(i).getProduto().getQuantidadeMin() + 0));
 			lista.get(i).getProduto().setQuantidadeMax(produtoRepository.findById(lista.get(i).getProduto().getCodigo()).get().getQuantidadeMax() - lista.get(i).getQuantidade());
 			lista.get(i).getProduto().setQuantidadeAcumulada((-(lista.get(i).getProduto().getQuantidadeMax())) - lista.get(i).getProduto().getQuantidadeMin());
@@ -358,6 +368,8 @@ public class PedidoService {
 				 lista.get(i).getProduto().setQuantidadeMax((long)(lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())));
 			}
 			
+		
+			
 			//	
 		}
 		
@@ -379,11 +391,13 @@ public class PedidoService {
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
 		List<Pedido> aux = buscarDemandas(username).getBody();
-		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
+		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
+		for(int i = 0; i < aux.size()-1; i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		return ResponseEntity.ok().body(lista);
 	}
+
 	
 	
 	public String DiminuirEmbalagem(long codigoPedido, String codigo, int quantidade) {
