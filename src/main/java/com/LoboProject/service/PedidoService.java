@@ -169,9 +169,6 @@ public class PedidoService {
 				}
 			}
 			else lista.get(i).setQuantidadeTotalPedidos((int) (-lista.get(i).getProduto().getQuantidadeMax() - lista.get(i).getProduto().getQuantidadeMin()));
-		/*	if((-(lista.get(i).getProduto().getQuantidadeMax()) > lista.get(i).getProduto().getQuantidadeMin()) && (((lista.get(i).getProduto().getQuantidadeAcumulada())) < lista.get(i).getProduto().getQuantidadeMin())) {
-				lista.get(i).getProduto().setQuantidadeMax((lista.get(i).getProduto().getQuantidadeMax() - (lista.get(i).getProduto().getQuantidadeMin() )));
-			}*/
 			
 			if(lista.get(i).getProduto().getQuantidadeMax() > 0) {
 				lista.get(i).getProduto().setQuantidadeMax((long)0);
@@ -183,8 +180,6 @@ public class PedidoService {
 			for(int j = 0; j < lista.size() ; j++) {
 				if((lista.get(i).getProduto().getCodigo() == lista.get(j).getProduto().getCodigo())&&(j != i)) {
 					lista.get(j).setQuantidade(lista.get(i).getQuantidade() + lista.get(j).getQuantidade());
-					//lista.remove(i);
-					//i--;
 				}
 				if(lista.get(i).getProduto().getQuantidadeMax() > 0) {
 					lista.get(i).getProduto().setQuantidadeMax((long)0);
@@ -355,10 +350,10 @@ public class PedidoService {
 			lista.get(i).setProduzir((int) (aux.get().getQuantidadeAtual() + 0));
 			if((lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())) >= 0) lista.get(i).getProduto().setQuantidadeMax((long) 0);
 			else {
-				if(lista.get(i).getProduzir() > lista.get(i).getQuantidadeTotalEstoqueMin() && (lista.get(i).getProduzir() <= lista.get(i).getQuantidadeTotalPedidos()) && (lista.get(i).getQuantidadeTotalEstoqueMin() != 0)) {
+				if(lista.get(i).getProduzir() >= lista.get(i).getQuantidadeTotalEstoqueMin() && (lista.get(i).getProduzir() <= lista.get(i).getQuantidadeTotalPedidos()) && (lista.get(i).getQuantidadeTotalEstoqueMin() != 0)) {
 					lista.get(i).getProduto().setQuantidadeMax((long)(((lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getProduzir())) + lista.get(i).getProduto().getQuantidadeMin()));
 				}
-				else lista.get(i).getProduto().setQuantidadeMax((long)(lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())));
+				 lista.get(i).getProduto().setQuantidadeMax((long)(lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())));
 			}
 			//	
 		}
