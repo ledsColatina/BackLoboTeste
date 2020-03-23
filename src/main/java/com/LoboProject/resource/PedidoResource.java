@@ -88,7 +88,7 @@ public class PedidoResource {
 	public ResponseEntity<?> criarPedido(@RequestBody Pedido pedido) {
 		if (pedidorepository.findById(pedido.getCodigo()).isPresent()) return ResponseEntity.badRequest().body("\n Pedido com Código repetido!");
 		List<PedidoProduto> lista = pedidoService.itensPedido(pedido);
-	//	if (lista.isEmpty()) return ResponseEntity.badRequest().body("\n Faltam Itens no Pedido ou alguns Itens não foram reconhecidos!");
+		if (lista.isEmpty()) return ResponseEntity.badRequest().body("\n Faltam Itens no Pedido ou alguns Itens não foram reconhecidos!");
 		pedido.setItens(null);
 		Pedido pedidoSalvo = pedidorepository.save(pedido);
 		for(int i = 0; i < lista.size(); i++) pedidoProdutorepository.save(lista.get(i));
