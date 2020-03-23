@@ -170,9 +170,10 @@ public class PedidoService {
 			}
 			else lista.get(i).setQuantidadeTotalPedidos((int) (-lista.get(i).getProduto().getQuantidadeMax() - lista.get(i).getProduto().getQuantidadeMin()));
 			
-			if(lista.get(i).getProduto().getQuantidadeMax() > 0) {
+			if(lista.get(i).getProduto().getQuantidadeMax() >= 0) {
 				lista.get(i).getProduto().setQuantidadeMax((long)0);
 			}
+			if(lista.get(i).getProduto().getQuantidadeAcumulada() == 0) lista.get(i).setQuantidadeTotalPedidos(0);
 			
 		}
 
@@ -346,6 +347,7 @@ public class PedidoService {
 	
 	public List<PedidoProduto> setarQuantidadeEmEstoqueCorreta(List<PedidoProduto> lista){
 		for(int i =0 ; i < lista.size(); i++) {
+			if(lista.get(i).getProduto().getQuantidadeAcumulada() != 0) lista.get(i).setQuantidadeTotalPedidos(lista.get(i).getQuantidade());
 			Optional<Produto> aux = produtoRepository.findById(lista.get(i).getProduto().getCodigo());
 			lista.get(i).setProduzir((int) (aux.get().getQuantidadeAtual() + 0));
 			if((lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())) >= 0) lista.get(i).getProduto().setQuantidadeMax((long) 0);
@@ -355,6 +357,7 @@ public class PedidoService {
 				}
 				 lista.get(i).getProduto().setQuantidadeMax((long)(lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())));
 			}
+			
 			//	
 		}
 		
