@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.LoboProject.domain.Setor;
 import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.UsuarioService;
@@ -43,6 +45,13 @@ public class UsuarioResource {
 	public ResponseEntity<?> BuscarUsername(@PathVariable String username){
 		Optional<Usuario> user = usuarioRepository.findByUsername(username);
 		return user.isPresent() ? ResponseEntity.ok(user) : ResponseEntity.notFound().build() ;
+	}
+	
+	@GetMapping("/setores/{username}")
+	@PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+	public ResponseEntity<List<Setor>> listarSetorUsuario(@PathVariable String username){
+		List<Setor> lista = usuarioService.listarSetorUsuario(username);
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.noContent().build();
 	}
 
 	
