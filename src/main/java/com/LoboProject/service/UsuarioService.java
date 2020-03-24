@@ -10,11 +10,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import com.LoboProject.domain.Permissao;
 import com.LoboProject.domain.Setor;
 import com.LoboProject.domain.Usuario;
 import com.LoboProject.repository.PermissaoRepository;
+import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.repository.SetorRepository;
 import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.security.GeradorSenhas;
@@ -27,6 +27,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private PermissaoRepository permissaoRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@Autowired
 	private SetorRepository setorRepository;
@@ -112,6 +115,11 @@ public class UsuarioService {
 		List<Setor> lista = usuario.getSetores();
 		if(usuario.isTipo()) {
 			lista = setorRepository.findAll();
+		}
+		for(int i = 0; i < lista.size(); i++) {
+			if(produtoRepository.findBySetor_id(lista.get(i).getId()).isEmpty()) {
+				lista.remove(i);
+			}
 		}
 		return lista;
 	}
