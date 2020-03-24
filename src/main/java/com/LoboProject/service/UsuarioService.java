@@ -114,8 +114,10 @@ public class UsuarioService {
 			lista = setorRepository.findAll();
 		}
 		for(int i = 0; i < lista.size(); i++) {
-			if(produtoRepository.findBySetor_id(lista.get(i).getId()).isEmpty()) {
+			if(produtoRepository.findBySetor_id(lista.get(i).getId()).isEmpty() == true) {
 				lista.remove(i);
+				if(i > 0) i--;
+				else i = 0;
 			}
 		}
 		return lista;
