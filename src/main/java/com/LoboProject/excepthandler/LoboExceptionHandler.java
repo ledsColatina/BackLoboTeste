@@ -3,6 +3,7 @@ package com.LoboProject.excepthandler;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.hibernate.TransientPropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -77,6 +78,15 @@ public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
 		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);
+	}
+	
+	@ExceptionHandler({ TransientPropertyValueException.class })
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<Object> handleTransientPropertyValueException (TransientPropertyValueException ex, WebRequest req){
+		String mensagemUsuario = messagesource.getMessage("recurso.Nao-Cadastrado",null, LocaleContextHolder.getLocale());
+		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, req)
 	}
 	
 	
