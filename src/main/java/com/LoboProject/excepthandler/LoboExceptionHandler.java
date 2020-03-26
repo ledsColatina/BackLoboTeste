@@ -86,7 +86,7 @@ public class LoboExceptionHandler extends ResponseEntityExceptionHandler{
 		String mensagemUsuario = messagesource.getMessage("recurso.Nao-Cadastrado",null, LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
-		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, req)
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, req);
 	}
 	
 	
