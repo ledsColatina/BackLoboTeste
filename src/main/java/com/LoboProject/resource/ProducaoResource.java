@@ -62,7 +62,6 @@ public class ProducaoResource {
 	}
 	
 	@GetMapping("/naoUsar")
-	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<String> buscarDemandas(){
 		Producao prod = new Producao();
 		int k = 1000;
