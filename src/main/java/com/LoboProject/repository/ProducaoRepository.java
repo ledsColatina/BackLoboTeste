@@ -1,6 +1,8 @@
 package com.LoboProject.repository;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import com.LoboProject.domain.Producao;
@@ -20,4 +22,8 @@ public interface ProducaoRepository extends JpaRepository<Producao, Long>{
 	
 	@Query(value = " select * from producao where producao.id_produto.setor = ? producao.data BETWEEN NOW() - INTERVAL '30' DAY AND NOW();", nativeQuery = true)
 	List<Producao> findByUltimasProducoesProdutos(Long valor);
+
+	List<Producao> findAllByOrderByCodigoDesc(Pageable pageable);
+	
+	Page<Producao> findByNomeOrderByCodigoDesc(String nome, Pageable pageable);
 }

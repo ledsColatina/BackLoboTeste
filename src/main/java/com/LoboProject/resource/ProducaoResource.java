@@ -18,7 +18,10 @@ import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.Relatorios;
 import com.LoboProject.repository.ProducaoRepository;
 import com.LoboProject.repository.ProdutoRepository;
+import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.ProducaoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/producao")
@@ -33,12 +36,14 @@ public class ProducaoResource {
 	@Autowired
 	private ProdutoRepository produtoRepository;
 	
+	@Autowired
+	private UsuarioRepository userRepository;
+	
+	
 	@GetMapping("/{username}")
-	public ResponseEntity<List<Producao>> listarProducao(@PathVariable String username){
-		List<Producao> producao = producaoRepository.findAllByOrderByCodigoDesc();
-		producao = producaoService.listarProducaoporUser(username);
-		producao = producaoService.ordenarProducao(producao);
-		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
+	public Page<Producao> listarProducao(@PathVariable String username, Pageable pageable){
+		String nome = userRepository.findByUsername(username).get().getNome();
+		return producaoRepository.findByNomeOrderByCodigoDesc(nome, pageable);
 	}
 	
 	@GetMapping("/relatorioSetor")
@@ -63,14 +68,16 @@ public class ProducaoResource {
 	
 	@GetMapping("/naoUsar")
 	public ResponseEntity<String> buscarDemandas(){
-		Producao prod = new Producao();
-		int k = 1000;
-		Optional<Produto> x = produtoRepository.findById("e");
-		for(int i =0; i < 10000; i++) {
+		
+		int k = 10000;
+		Optional<Produto> x = produtoRepository.findById("gr2");
+		for(int i =0; i < 1000; i++) {
+			Producao prod = new Producao();
 			prod.setCodigo((long)k);
-			prod.setNome("aa");
+			prod.setNome("admin");
 			prod.setProduto(x.get());
 			prod.setData(new java.util.Date(System.currentTimeMillis()));
+			prod.setQuantidade((long) 1);
 			k++;
 			producaoRepository.save(prod);
 		}
