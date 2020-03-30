@@ -65,10 +65,10 @@ public class ProducaoResource {
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<String> buscarDemandas(){
 		Producao prod = new Producao();
-		long k = 1000;
+		int k = 1000;
 		Optional<Produto> x = produtoRepository.findById("e");
 		for(int i =0; i < 10000; i++) {
-			prod.setCodigo(k);
+			prod.setCodigo((long)k);
 			prod.setNome("aa");
 			prod.setProduto(x.get());
 			prod.setData(new java.util.Date(System.currentTimeMillis()));
