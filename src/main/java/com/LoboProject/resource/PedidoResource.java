@@ -84,6 +84,7 @@ public class PedidoResource {
 		return comprepository.findAllProdutoTodo(id_produto_parte);
 	}
 	
+	
 	@PostMapping
 	public ResponseEntity<?> criarPedido(@RequestBody Pedido pedido) {
 		if (pedidorepository.findById(pedido.getCodigo()).isPresent()) return ResponseEntity.badRequest().body("\n Pedido com Código repetido!");

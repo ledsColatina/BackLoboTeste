@@ -1,6 +1,7 @@
 package com.LoboProject.resource;
 
 import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Producao;
+import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.Relatorios;
 import com.LoboProject.repository.ProducaoRepository;
+import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.service.ProducaoService;
 
 @RestController
@@ -26,6 +29,9 @@ public class ProducaoResource {
 	
 	@Autowired
 	private ProducaoService producaoService;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<List<Producao>> listarProducao(@PathVariable String username){
@@ -53,6 +59,23 @@ public class ProducaoResource {
 	public ResponseEntity<List<Producao>> listar50Producoes(){
 		List<Producao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/naoUsar")
+	@PreAuthorize("hasAuthority('USER')")
+	public ResponseEntity<String> buscarDemandas(){
+		Producao prod = new Producao();
+		long k = 1000;
+		Optional<Produto> x = produtoRepository.findById("e");
+		for(int i =0; i < 10000; i++) {
+			prod.setCodigo(k);
+			prod.setNome("aa");
+			prod.setProduto(x.get());
+			prod.setData(new java.util.Date(System.currentTimeMillis()));
+			k++;
+			producaoRepository.save(prod);
+		}
+		return ResponseEntity.ok().body("ok");
 	}
 	
 	
