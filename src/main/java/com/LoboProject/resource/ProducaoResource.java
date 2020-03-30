@@ -68,9 +68,8 @@ public class ProducaoResource {
 	
 	@GetMapping("/naoUsar")
 	public ResponseEntity<String> buscarDemandas(){
-		
 		int k = 10000;
-		Optional<Produto> x = produtoRepository.findById("gr2");
+		Optional<Produto> x = produtoRepository.findById("e");
 		for(int i =0; i < 1000; i++) {
 			Producao prod = new Producao();
 			prod.setCodigo((long)k);
