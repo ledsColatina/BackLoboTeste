@@ -348,7 +348,8 @@ public class PedidoService {
 				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
 					lista.get(j).setQuantidade(lista.get(i).getQuantidade() + lista.get(j).getQuantidade());
 					lista.remove(i);
-					j--;
+					if(i > 0)i--;
+					else i=0;
 				}
 			}
 		}
