@@ -322,6 +322,7 @@ public class PedidoService {
 					lista.get(j).setQuantidade((lista.get(j).getQuantidade() + lista.get(i).getQuantidade()));
 					lista.remove(i);
 					if(i > 0)i--;
+					else i = 0;
 				}
 			}
 		}
