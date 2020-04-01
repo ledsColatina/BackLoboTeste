@@ -394,7 +394,7 @@ public class PedidoService {
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
 		List<Pedido> aux = buscarDemandas(username).getBody();
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
-		for(int i = 0; i < aux.size()-1; i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
+		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		return ResponseEntity.ok().body(lista);
