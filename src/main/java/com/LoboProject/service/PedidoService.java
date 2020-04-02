@@ -325,6 +325,22 @@ public class PedidoService {
 		return lista;
 	}
 	
+	public List<PedidoProduto> formatarRepetidos(List<PedidoProduto> lista){
+		for(int i = 0; i < lista.size(); i++) {
+			for(int j = 0;  j< lista.size(); j++) {
+				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
+					//lista.get(j).setQuantidade(lista.get(i).getQuantidade() + lista.get(j).getQuantidade());
+					lista.remove(i);
+					if(i > 0)i--;
+					else i=0;
+				}
+			}
+		}
+		
+		return lista;
+	}
+	
+	
 	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
 		int i,j;
 		List<Produto> estMin = produtoRepository.findAllEstoque();
@@ -417,6 +433,7 @@ public class PedidoService {
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
 		lista = inserindoEstoqueMinimo(lista);
+		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 
