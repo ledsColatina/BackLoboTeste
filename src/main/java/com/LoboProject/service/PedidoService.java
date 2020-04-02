@@ -368,6 +368,7 @@ public class PedidoService {
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
+		lista = formatarComposicaoSemSomar(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 
