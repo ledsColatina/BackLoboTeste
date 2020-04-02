@@ -276,7 +276,6 @@ public class PedidoService {
 	
 	
 	
-	
 	public List<Pedido> formatarTirandoRepetidos(List<Pedido> lista, String username ){
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(formatarComposicao(lista.get(i).getItens(), username));
@@ -326,6 +325,36 @@ public class PedidoService {
 		return lista;
 	}
 	
+	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
+		int i,j;
+		List<Produto> estMin = produtoRepository.findAllEstoque();
+	//	List<PedidoProduto> aux = new ArrayList<PedidoProduto>();
+		for(i =0; i < lista.size(); i++) {
+			for(j =0; j < estMin.size(); j++) {
+				if(lista.get(i).getProduto().getCodigo().equals(estMin.get(j).getCodigo())) {
+					estMin.remove(j);
+					if(j > 0) j--;
+					else j =0;
+				}
+			}
+		}
+		
+		for(i =0; i < estMin.size(); i++) {
+			PedidoProdutoKey chave = new PedidoProdutoKey();
+			chave.setPedidoCodigo((long) 909090);
+			chave.setProdutoCodigo(estMin.get(i).getCodigo());
+			PedidoProduto x = new PedidoProduto();
+			estMin.get(i).setQuantidadeMax(estMin.get(i).getQuantidadeAtual() - estMin.get(i).getQuantidadeMin());
+			x.setProduto(estMin.get(i));
+			x.setQuantidadeTotalEstoqueMin(estMin.get(i).getQuantidadeMin().intValue());
+			x.setQuantidadeTotalPedidos(0);
+			x.setId(chave);
+			lista.add(x);
+		}
+		
+		return lista;
+	}
+	
 	public List<PedidoProduto> setarQuantidadeEmEstoqueCorreta(List<PedidoProduto> lista){
 		for(int i =0 ; i < lista.size(); i++) {
 			if(lista.get(i).getProduto().getQuantidadeAcumulada() != 0) lista.get(i).setQuantidadeTotalPedidos(lista.get(i).getQuantidade());
@@ -353,7 +382,7 @@ public class PedidoService {
 			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
 		lista = ordernarPorPrioridade(lista);
-		lista.addAll(estoqueMin(username));
+		//lista.addAll(estoqueMin(username));
 		lista = quebrarDemandas(lista, username);
 		lista = formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
@@ -367,6 +396,7 @@ public class PedidoService {
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
+		lista = inserindoEstoqueMinimo(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 
@@ -482,13 +512,13 @@ public class PedidoService {
 			PedidoProduto item = new PedidoProduto();
 			item.setProduto(lista.get(i));
 			item.setPedido(pedido);
+	//		item.setQuantidadeTotalEstoqueMin(lista.get(i).getQuantidadeMin().intValue());
 			item.setQuantidade(lista.get(i).getQuantidadeMin().intValue());
 			itens.add(item);
 		}
 		pedido.setItens(itens);
 		List<Pedido> pedidos = new ArrayList<>();
 		pedidos.add(pedido);
-		//pedidos = quebrarDemandas(pedidos, username);
 		return pedidos;
 	}
 	
