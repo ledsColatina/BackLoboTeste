@@ -328,7 +328,6 @@ public class PedidoService {
 	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
 		int i,j;
 		List<Produto> estMin = produtoRepository.findAllEstoque();
-	//	List<PedidoProduto> aux = new ArrayList<PedidoProduto>();
 		for(i =0; i < lista.size(); i++) {
 			for(j =0; j < estMin.size(); j++) {
 				if(lista.get(i).getProduto().getCodigo().equals(estMin.get(j).getCodigo())) {
@@ -340,15 +339,11 @@ public class PedidoService {
 		}
 		
 		for(i =0; i < estMin.size(); i++) {
-			PedidoProdutoKey chave = new PedidoProdutoKey();
-			chave.setPedidoCodigo((long) 909090);
-			chave.setProdutoCodigo(estMin.get(i).getCodigo());
 			PedidoProduto x = new PedidoProduto();
 			estMin.get(i).setQuantidadeMax(estMin.get(i).getQuantidadeAtual() - estMin.get(i).getQuantidadeMin());
 			x.setProduto(estMin.get(i));
 			x.setQuantidadeTotalEstoqueMin(estMin.get(i).getQuantidadeMin().intValue());
 			x.setQuantidadeTotalPedidos(0);
-			x.setId(chave);
 			lista.add(x);
 		}
 		
