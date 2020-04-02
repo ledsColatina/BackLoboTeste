@@ -343,7 +343,7 @@ public class PedidoService {
 			estMin.get(i).setQuantidadeMax(estMin.get(i).getQuantidadeAtual() - estMin.get(i).getQuantidadeMin());
 			x.setProduto(estMin.get(i));
 			x.setQuantidadeTotalEstoqueMin(estMin.get(i).getQuantidadeMin().intValue());
-			x.setQuantidade(estMin.get(i).getQuantidadeMin().intValue());
+			x.setQuantidade(x.getQuantidadeTotalEstoqueMin());
 			x.setQuantidadeTotalPedidos(0);
 			lista.add(x);
 		}
@@ -352,7 +352,7 @@ public class PedidoService {
 	}
 	
 	public Produto setandoQuantidade(Produto produto, long l) {
-		produto.setQuantidadeMax(produto.getQuantidadeMax() + -l);
+		produto.setQuantidadeMax(produto.getQuantidadeMax() + l);
 		return produto;
 	}
 	
