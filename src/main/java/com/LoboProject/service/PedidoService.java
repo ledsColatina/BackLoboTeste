@@ -352,7 +352,7 @@ public class PedidoService {
 	}
 	
 	public Produto setandoQuantidade(Produto produto, long l) {
-		produto.setQuantidadeMax(-(produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l);
+		produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l));
 		return produto;
 	}
 	
@@ -364,7 +364,7 @@ public class PedidoService {
 					for(j =0; j < lista.get(i).getProduto().getComposicao().size();j++) {
 						if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() < (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
 							Produto produto = setandoQuantidade(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
-							lista.get(i).setProduto(produto);
+							lista.get(j).setProduto(produto);
 						}
 					}
 				}
