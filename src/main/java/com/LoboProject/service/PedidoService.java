@@ -343,15 +343,15 @@ public class PedidoService {
 			estMin.get(i).setQuantidadeMax(estMin.get(i).getQuantidadeAtual() - estMin.get(i).getQuantidadeMin());
 			x.setProduto(estMin.get(i));
 			x.setQuantidadeTotalEstoqueMin(estMin.get(i).getQuantidadeMin().intValue());
-			x.setQuantidadeTotalPedidos(0);
 			x.setQuantidade(estMin.get(i).getQuantidadeMin().intValue());
+			x.setQuantidadeTotalPedidos(0);
 			lista.add(x);
 		}
 		
 		return lista;
 	}
 	
-	/*public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
+/*	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
 		int i,j, k;
 		for(i =0; i < lista.size(); i++) {
 			if(lista.get(i).getQuantidade() < 0) {
