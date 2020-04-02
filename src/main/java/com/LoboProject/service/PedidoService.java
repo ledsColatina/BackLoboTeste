@@ -382,7 +382,7 @@ public class PedidoService {
 			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
 		lista = ordernarPorPrioridade(lista);
-		//lista.addAll(estoqueMin(username));
+		lista.addAll(estoqueMin(username));
 		lista = quebrarDemandas(lista, username);
 		lista = formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
@@ -396,7 +396,7 @@ public class PedidoService {
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		//lista = inserindoEstoqueMinimo(lista);
+		lista = inserindoEstoqueMinimo(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 
