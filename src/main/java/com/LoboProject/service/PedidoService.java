@@ -396,7 +396,7 @@ public class PedidoService {
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		lista = inserindoEstoqueMinimo(lista);
+		//lista = inserindoEstoqueMinimo(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 
