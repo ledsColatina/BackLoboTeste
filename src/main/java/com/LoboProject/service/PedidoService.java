@@ -352,7 +352,7 @@ public class PedidoService {
 	}
 	
 	public Produto setandoQuantidade(Produto produto, long l) {
-		produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l));
+		produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		return produto;
 	}
 	
