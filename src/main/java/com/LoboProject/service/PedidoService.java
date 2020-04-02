@@ -352,14 +352,14 @@ public class PedidoService {
 	}
 	
 	public Produto setandoQuantidade(Produto produto, long l) {
-		produto.setQuantidadeMax(-l);
+		produto.setQuantidadeMax(produto.getQuantidadeMax() + -l);
 		return produto;
 	}
 	
 	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
 		int i,j;
 		for(i =0; i < lista.size(); i++) {
-			if(lista.get(i).getQuantidade() < 0) {
+			if(lista.get(i).getProduto().getQuantidadeMax() < 0) {
 				if(lista.get(i).getProduto().getComposicao() != null) {
 					for(j =0; j < lista.get(i).getProduto().getComposicao().size();j++) {
 						if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() < (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
