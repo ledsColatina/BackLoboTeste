@@ -269,36 +269,7 @@ public class PedidoService {
 							pedidoProduto.setQuantidadeTotalPedidos(0);
 							pedidoProduto.setQuantidadeTotalEstoqueMin((int)(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() - lista.get(i).getItens().get(j).getQuantidade()));
 						}
-					}/*else {
-						for(int cont = 0; i < lista.size(); i++) {
-							for(int cont2 = 0; cont2 < lista.get(cont).getItens().size(); cont2++) {
-								if(lista.get(cont).getItens().get(cont2).getProduto().getCodigo().equals(pedidoProduto.getProduto().getCodigo())) {
-									if(pedidoProduto.getQuantidadeTotalEstoqueMin() <= 0) {
-										
-									}
-								}
-							}	
-						}*/
-					//}
-					
-					/*if(i == 0) {
-						if(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() < lista.get(i).getItens().get(j).getQuantidade()) {
-							pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-									* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
-							lista.get(i).getItens().add(pedidoProduto);
-						}	
-					}else {
-							pedidoProduto.setQuantidade((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-									* (lista.get(i).getItens().get(j).getQuantidade())));
-							lista.get(i).getItens().add(pedidoProduto);
-					}*/
-					
-					
-					/*if(pedidoProduto.getQuantidade() < pedidoProduto.getProduto().getQuantidadeAtual()) {
-						lista.get(i).getItens().get(lista.get(i).getItens().indexOf(pedidoProduto)).setVisible(0);
-					}*/
-					
-					
+					}
 				}
 			}
 		}
