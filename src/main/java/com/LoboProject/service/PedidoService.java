@@ -260,19 +260,10 @@ public class PedidoService {
 					
 					if(i == 0) {
 						if(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() <= lista.get(i).getItens().get(j).getQuantidade()) {
-							if(lista.get(i).getItens().get(j).getProduto().getQuantidadeMin() > lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()) {
-								pedidoProduto.setQuantidadeTotalPedidos((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-										* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() + lista.get(i).getItens().get(j).getProduto().getQuantidadeMin()))));
-								pedidoProduto.setQuantidadeTotalEstoqueMin(0);
-							}else {
-								pedidoProduto.setQuantidadeTotalPedidos((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-										* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
-								pedidoProduto.setQuantidadeTotalEstoqueMin(0);
-							}
-							
+							pedidoProduto.setQuantidadeTotalPedidos((int) (lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
+								* (lista.get(i).getItens().get(j).getQuantidade() - (lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()))));
+							pedidoProduto.setQuantidadeTotalEstoqueMin(0);
 						}else {
-							/*pedidoProduto.setQuantidadeTotalPedidos((int)(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()
-									* (lista.get(i).getItens().get(j).getQuantidade())));*/
 							pedidoProduto.setQuantidadeTotalPedidos(0);
 							pedidoProduto.setQuantidadeTotalEstoqueMin((int)(lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual() - lista.get(i).getItens().get(j).getQuantidade()));
 						}
