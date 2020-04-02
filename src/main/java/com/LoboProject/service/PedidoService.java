@@ -371,7 +371,7 @@ public class PedidoService {
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
 		List<Pedido> aux = buscarDemandas(username).getBody();
-		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
+		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
