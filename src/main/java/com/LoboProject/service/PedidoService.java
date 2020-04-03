@@ -350,7 +350,7 @@ public class PedidoService {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		}else {
 			if(l <= produto.getQuantidadeAtual()) {
-				produto.setQuantidadeMax(produto.getQuantidadeMax() - l - l);
+				produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
 			}
 			else produto.setQuantidadeMax(produto.getQuantidadeMax() - l);
 		}
