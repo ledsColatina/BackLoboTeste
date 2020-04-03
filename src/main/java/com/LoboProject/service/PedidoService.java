@@ -349,7 +349,7 @@ public class PedidoService {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		}else {
-			produto.setQuantidadeMax(produto.getQuantidadeMax() - l);
+			produto.setQuantidadeMax(produto.getQuantidadeMax() - l - produto.getQuantidadeMin());
 		}
 		return produto;
 	}
@@ -430,31 +430,6 @@ public class PedidoService {
 		return ResponseEntity.ok().body(lista);
 	}
 	
-/*	public ResponseEntity<List<PedidoProduto>> att(String username){
-		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List<Pedido> aux = buscarDemandas(username).getBody();
-		int cont, cont2;
-		for(int i =0; i < aux.size(); i++) {
-			for(int j=0; j < aux.get(i).getItens().size(); j++) {
-				cont = 0;
-				cont2 = 0;
-				for(int k=0; k < lista.size(); k++) {
-					if(lista.get(k).getProduto().getCodigo().equals(aux.get(i).getItens().get(j).getProduto().getCodigo())) {
-						cont = k;
-						cont2 = j;
-					}
-				}
-				if(cont != 0) {
-					lista.get(cont).setQuantidade(lista.get(cont).getQuantidade() + aux.get(i).getItens().get(cont2).getQuantidade());
-				}else {
-					lista.add(aux.get(i).getItens().get(j));
-					lista.get(cont).setQuantidade(aux.get(i).getItens().get(j).getQuantidade());
-				}
-			}
-		}
-		return ResponseEntity.ok().body(lista);
-	}*/
-
 	
 	
 	public String DiminuirEmbalagem(long codigoPedido, String codigo, int quantidade) {
