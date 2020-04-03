@@ -350,7 +350,7 @@ public class PedidoService {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		}else {
 			if(l < produto.getQuantidadeAtual()) {
-				produto.setQuantidadeMax(produto.getQuantidadeMax() - l -l);
+				produto.setQuantidadeMax(produto.getQuantidadeMax() - l - l);
 			}
 			else produto.setQuantidadeMax(produto.getQuantidadeMax() - l);
 		}
@@ -359,6 +359,7 @@ public class PedidoService {
 	
 	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
 		int i,j, op;
+		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
 		for(i =0; i < lista.size(); i++) {
 			if(lista.get(i).getProduto().getQuantidadeMax() < 0) {
@@ -372,7 +373,13 @@ public class PedidoService {
 									if(!produtosDebate.contains(lista.get(k).getProduto())) {
 										produtosDebate.add(lista.get(k).getProduto());
 									}else op = 1;
-									Produto produto = setandoQuantidade(op,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
+									if(op == 1) {
+										produto = setandoQuantidade(op,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));
+									}
+									else {
+										produto = setandoQuantidade(op,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));	
+									}
+									
 									lista.get(k).setProduto(produto);
 									
 								}
