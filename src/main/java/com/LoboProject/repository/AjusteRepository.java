@@ -7,4 +7,6 @@ import com.LoboProject.domain.Ajuste;
 public interface AjusteRepository extends JpaRepository<Ajuste, Long> {
 
 	List<Ajuste> findAllByOrderByCodigoDesc();
+	
+	void deleteByproduto_codigo(String id);
 }
