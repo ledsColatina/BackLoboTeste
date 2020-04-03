@@ -365,7 +365,7 @@ public class PedidoService {
 			if(lista.get(i).getProduto().getQuantidadeMax() < 0) {
 				if(lista.get(i).getProduto().getComposicao() != null) {
 					for(j =0; j < lista.get(i).getProduto().getComposicao().size();j++) {
-						if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() <= (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
+						//if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() <= (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
 							
 							for(int k =0 ; k  < lista.size(); k++) {
 								op = 0;
@@ -378,7 +378,7 @@ public class PedidoService {
 									}
 									lista.get(k).setProduto(produto);
 								}
-							}
+							//}
 						}
 					}
 				}
