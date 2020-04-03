@@ -341,47 +341,37 @@ public class PedidoService {
 	
 	
 	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
-		int i,j;
-		List<Produto> estMin = produtoRepository.findAllEstoque();
-		/*for(i =0; i < lista.size(); i++) {
-			for(j =0; j < estMin.size(); j++) {
-				if(lista.get(i).getProduto().getCodigo().equals(estMin.get(j).getCodigo())) {
-					estMin.remove(j);
-					if(j > 0) j--;
-					else j =0;
-				}
-			}
-		}
-		
-		for(i =0; i < estMin.size(); i++) {
-			PedidoProduto x = new PedidoProduto();
-			estMin.get(i).setQuantidadeMax(estMin.get(i).getQuantidadeAtual() - estMin.get(i).getQuantidadeMin());
-			x.setProduto(estMin.get(i));
-			x.setQuantidadeTotalEstoqueMin(estMin.get(i).getQuantidadeMin().intValue());
-			x.setQuantidade(x.getQuantidadeTotalEstoqueMin());
-			x.setQuantidadeTotalPedidos(0);
-			lista.add(x);
-		}*/
 		lista = inserindoEstoqueMinAsComposicoes(lista);
 		return lista;
 	}
 	
-	public Produto setandoQuantidade(Produto produto, long l) {
-		produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
+	public Produto setandoQuantidade(int op, Produto produto, long l) {
+		if(op == 0) {
+			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
+		}else {
+			produto.setQuantidadeMax(produto.getQuantidadeMax() - l);
+		}
 		return produto;
 	}
 	
 	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
-		int i,j;
+		int i,j, op;
+		List<Produto> produtosDebate = new ArrayList<Produto>();
 		for(i =0; i < lista.size(); i++) {
 			if(lista.get(i).getProduto().getQuantidadeMax() < 0) {
 				if(lista.get(i).getProduto().getComposicao() != null) {
 					for(j =0; j < lista.get(i).getProduto().getComposicao().size();j++) {
 						if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() < (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
-							Produto produto = setandoQuantidade(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
-							for(int k =0; k < lista.size(); k++) {
-								if(lista.get(i).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getCodigo())) {
+							
+							for(int k =0 ; k  < lista.size(); k++) {
+								op = 0;
+								if(lista.get(k).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getCodigo())) {
+									if(!produtosDebate.contains(lista.get(k).getProduto())) {
+										produtosDebate.add(lista.get(k).getProduto());
+									}else op = 1;
+									Produto produto = setandoQuantidade(op,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
 									lista.get(k).setProduto(produto);
+									
 								}
 							}
 						}
@@ -436,9 +426,34 @@ public class PedidoService {
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
 		lista = inserindoEstoqueMinimo(lista);
-		//lista = formatarRepetidos(lista);
+		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
+	
+/*	public ResponseEntity<List<PedidoProduto>> att(String username){
+		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
+		List<Pedido> aux = buscarDemandas(username).getBody();
+		int cont, cont2;
+		for(int i =0; i < aux.size(); i++) {
+			for(int j=0; j < aux.get(i).getItens().size(); j++) {
+				cont = 0;
+				cont2 = 0;
+				for(int k=0; k < lista.size(); k++) {
+					if(lista.get(k).getProduto().getCodigo().equals(aux.get(i).getItens().get(j).getProduto().getCodigo())) {
+						cont = k;
+						cont2 = j;
+					}
+				}
+				if(cont != 0) {
+					lista.get(cont).setQuantidade(lista.get(cont).getQuantidade() + aux.get(i).getItens().get(cont2).getQuantidade());
+				}else {
+					lista.add(aux.get(i).getItens().get(j));
+					lista.get(cont).setQuantidade(aux.get(i).getItens().get(j).getQuantidade());
+				}
+			}
+		}
+		return ResponseEntity.ok().body(lista);
+	}*/
 
 	
 	
