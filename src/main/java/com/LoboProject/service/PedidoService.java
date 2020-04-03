@@ -349,36 +349,30 @@ public class PedidoService {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		}else {
-			if(l <= produto.getQuantidadeAtual()) {
 				produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
-			}
-			else produto.setQuantidadeMax(produto.getQuantidadeMax() - l);
 		}
+		if(produto.getQuantidadeMax() >=0 ) produto.setQuantidadeMax((long) 0);
 		return produto;
 	}
 	
 	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
-		int i,j, op;
+		int i,j;
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
 		for(i =0; i < lista.size(); i++) {
 			if(lista.get(i).getProduto().getQuantidadeMax() < 0) {
 				if(lista.get(i).getProduto().getComposicao() != null) {
 					for(j =0; j < lista.get(i).getProduto().getComposicao().size();j++) {
-						//if(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual() <= (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()))) {
-							
-							for(int k =0 ; k  < lista.size(); k++) {
-								op = 0;
-								if(lista.get(k).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getCodigo())) {
-									if(!produtosDebate.contains(lista.get(k).getProduto())) {
-										produtosDebate.add(lista.get(k).getProduto());
-										produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
-									}else {
-										produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
-									}
-									lista.get(k).setProduto(produto);
+						for(int k =0 ; k  < lista.size(); k++) {
+							if(lista.get(k).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getCodigo())) {
+								if(!produtosDebate.contains(lista.get(k).getProduto())) {
+									produtosDebate.add(lista.get(k).getProduto());
+									produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
+								}else {
+									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-							//}
+								lista.get(k).setProduto(produto);
+							}
 						}
 					}
 				}
