@@ -332,7 +332,10 @@ public class PedidoService {
 					lista.remove(i);
 					if(i > 0)i--;
 					else i=0;
+				}else if(lista.get(i).getProduto().getQuantidadeMax() >= 0) {
+					lista.get(i).getProduto().setQuantidadeMax((long) 0); 
 				}
+				
 			}
 		}
 		
@@ -351,7 +354,6 @@ public class PedidoService {
 		}else {
 				produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
 		}
-		if(produto.getQuantidadeMax() >=0 ) produto.setQuantidadeMax((long) 0);
 		return produto;
 	}
 	
