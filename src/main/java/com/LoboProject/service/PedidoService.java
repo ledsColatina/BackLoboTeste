@@ -252,7 +252,7 @@ public class PedidoService {
 					chave.setProdutoCodigo(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getCodigo());
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setVisible(1);
-					pedidoProduto.setPedido(lista.get(i));
+					//pedidoProduto.setPedido(lista.get(i));
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
 					pedidoProduto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
 					pedidoProduto.setQuantidadeTotalEstoqueMin((int)(pedidoProduto.getProduto().getQuantidadeMin() - 0));
@@ -344,7 +344,7 @@ public class PedidoService {
 	
 	public List<PedidoProduto> somandoPedidos(List<PedidoProduto> lista){
 		for(int i =0; i < lista.size(); i++) {
-			if(lista.get(i).getId().getPedidoCodigo() != null) {
+			if(lista.get(i).getPedido() != null) {
 				lista.get(i).getProduto().setQuantidadeMax(lista.get(i).getProduto().getQuantidadeMax() - lista.get(i).getQuantidade());
 			}
 		}
