@@ -424,7 +424,7 @@ public class PedidoService {
 								}
 								for(int x = 0; x < listaPedidos.size(); x++) {
 									if(listaPedidos.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-										produto.setQuantidadeMax(produto.getQuantidadeMax() + listaPedidos.get(x).getQuantidade());
+										produto.setQuantidadeMax(produto.getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
 										break;
 										//lista.get(k).getProduto().setQuantidadeMax(lista.get(k).getProduto().getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
 									}
