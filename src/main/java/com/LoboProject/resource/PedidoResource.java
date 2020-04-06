@@ -127,11 +127,11 @@ public class PedidoResource {
 	
 	@PostMapping("/embalagem/{codigoPedido}/{codigo}/{quantidade}")
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'EMBALAGEM')") 
-	public ResponseEntity<String> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
+	public ResponseEntity<?> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
 		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade).equals("OK")) {
 			PedidoProduto item = pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade);
 			pedidoProdutorepository.save(item);
-			return ResponseEntity.ok().body("Ok");
+			return ResponseEntity.ok().build();
 		}else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque Insuficiente para o Pedido!!");
 	}
 	
