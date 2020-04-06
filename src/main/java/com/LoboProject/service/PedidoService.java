@@ -406,6 +406,19 @@ public class PedidoService {
 	
 	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
 		int i,j;
+		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+		
+		for(int x = 0; x < listaPedidos.size(); x++) {
+			for(int y = 0;  y< listaPedidos.size(); y++) {
+				if(listaPedidos.get(x).getProduto().getCodigo().equals(listaPedidos.get(y).getProduto().getCodigo()) && (x != y)) {
+					listaPedidos.get(y).setQuantidade(listaPedidos.get(y).getQuantidade());
+					listaPedidos.remove(y);
+					if(x > 0)x--;
+					else x=0;
+				}	
+			}
+		}
+		
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
 		for(i =0; i < lista.size(); i++) {
@@ -419,6 +432,11 @@ public class PedidoService {
 									produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
+								}
+								for(int x = 0; x < listaPedidos.size(); x++) {
+									if(listaPedidos.get(x).getProduto().getCodigo().equals(lista.get(k).getProduto().getCodigo())) {
+										lista.get(k).getProduto().setQuantidadeMax(lista.get(k).getProduto().getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
+									}
 								}
 								lista.get(k).setProduto(produto);
 							}
