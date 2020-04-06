@@ -423,8 +423,8 @@ public class PedidoService {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
 								for(int x = 0; x < listaPedidos.size(); x++) {
-									if(listaPedidos.get(x).getProduto().getCodigo().equals(lista.get(k).getProduto().getCodigo())) {
-										produto.setQuantidadeMax(produto.getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
+									if(listaPedidos.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
+										produto.setQuantidadeMax(produto.getQuantidadeMax() + listaPedidos.get(x).getQuantidade());
 										break;
 										//lista.get(k).getProduto().setQuantidadeMax(lista.get(k).getProduto().getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
 									}
