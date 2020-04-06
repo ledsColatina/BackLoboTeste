@@ -352,7 +352,7 @@ public class PedidoService {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
 		}else {
-				produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
+			produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
 		}
 		return produto;
 	}
@@ -377,6 +377,14 @@ public class PedidoService {
 							}
 						}
 					}
+				}else {
+					if(!produtosDebate.contains(lista.get(i).getProduto())) {
+						produtosDebate.add(lista.get(i).getProduto());
+						produto = setandoQuantidade(0,lista.get(i).getProduto(), (lista.get(i).getQuantidade() - lista.get(i).getProduto().getQuantidadeAtual()));
+					}else {
+						produto = setandoQuantidade(1,lista.get(i).getProduto(), lista.get(i).getQuantidade());	
+					}
+					lista.get(i).setProduto(produto);
 				}
 			}
 		}
