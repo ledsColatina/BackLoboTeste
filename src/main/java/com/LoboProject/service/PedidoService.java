@@ -473,9 +473,8 @@ public class PedidoService {
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
-	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
+	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		List<Pedido> aux = buscarDemandas(username).getBody();
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));

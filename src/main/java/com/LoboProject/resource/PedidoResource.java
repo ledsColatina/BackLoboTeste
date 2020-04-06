@@ -71,7 +71,8 @@ public class PedidoResource {
 	@GetMapping("/demandasProd/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
-		return pedidoService.buscarDemandasProduto(username);
+		List <PedidoProduto> listaPedidos = pedidoProdutorepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+		return pedidoService.buscarDemandasProduto(username, listaPedidos);
 	}
 	
 	@GetMapping("/estoque/{id_produto_parte}")
