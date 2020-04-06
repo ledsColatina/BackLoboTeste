@@ -433,7 +433,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-							/*	for(int x = 0; x < listaPedidos.size(); x++) {
+								/*for(int x = 0; x < listaPedidos.size(); x++) {
 									if(listaPedidos.get(x).getProduto().getCodigo().equals(lista.get(k).getProduto().getCodigo())) {
 										lista.get(k).getProduto().setQuantidadeMax(lista.get(k).getProduto().getQuantidadeMax() - listaPedidos.get(x).getQuantidade());
 									}
@@ -492,7 +492,7 @@ public class PedidoService {
 		lista = inserindoEstoqueMinimo(lista);
 		//lista = somando(lista);
 		
-		lista = formatarRepetidos(lista);
+		//lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
 	
