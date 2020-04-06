@@ -433,10 +433,10 @@ public class PedidoService {
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
+		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
 		lista = inserindoEstoqueMinimo(lista);
-		lista = somandoPedidos(lista);
 		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
