@@ -408,17 +408,6 @@ public class PedidoService {
 		int i,j;
 		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		
-		for(int x = 0; x < listaPedidos.size(); x++) {
-			for(int y = 0;  y< listaPedidos.size(); y++) {
-				if(listaPedidos.get(x).getProduto().getCodigo().equals(listaPedidos.get(y).getProduto().getCodigo()) && (x != y)) {
-					listaPedidos.get(y).setQuantidade(listaPedidos.get(y).getQuantidade());
-					listaPedidos.remove(y);
-					if(x > 0)x--;
-					else x=0;
-				}	
-			}
-		}
-		
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
 		for(i =0; i < lista.size(); i++) {
