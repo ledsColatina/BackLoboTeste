@@ -356,8 +356,8 @@ public class PedidoService {
 	}
 	
 	
-	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
-		lista = inserindoEstoqueMinAsComposicoes(lista);
+	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos){
+		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos);
 		return lista;
 	}
 	
@@ -404,9 +404,8 @@ public class PedidoService {
 		return produto;
 	}
 	
-	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista){
+	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos){
 		int i,j;
-		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
@@ -473,6 +472,7 @@ public class PedidoService {
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
+		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		List<Pedido> aux = buscarDemandas(username).getBody();
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
@@ -480,7 +480,7 @@ public class PedidoService {
 		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		lista = inserindoEstoqueMinimo(lista);
+		lista = inserindoEstoqueMinimo(lista, listaPedidos);
 		//lista = somando(lista);
 		
 		//lista = formatarRepetidos(lista);
