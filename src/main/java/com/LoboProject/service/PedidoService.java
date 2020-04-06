@@ -377,7 +377,7 @@ public class PedidoService {
 		for(int i =0 ; i < lista.size(); i++) {
 			for(int j = 0; j < listaPedidos.size(); j++) {
 				if(lista.get(i).getProduto().getCodigo().equals(listaPedidos.get(j).getProduto().getCodigo())) {
-					if(lista.get(i).getProduto().getQuantidadeMax() != (-(listaPedidos.get(j).getQuantidade() + listaPedidos.get(j).getQuantidadeTotalEstoqueMin()))) {
+					if(lista.get(i).getProduto().getQuantidadeMax() != (-(listaPedidos.get(j).getQuantidade() + listaPedidos.get(j).getQuantidadeTotalEstoqueMin() - lista.get(i).getProduto().getQuantidadeAtual()))) {
 						lista.get(i).getProduto().setQuantidadeMax(lista.get(i).getProduto().getQuantidadeMax() - listaPedidos.get(j).getQuantidade());
 						if(lista.get(i).getProduto().getComposicao() != null) {
 							for(int k = 0; k < lista.get(i).getProduto().getComposicao().size(); k++) {
