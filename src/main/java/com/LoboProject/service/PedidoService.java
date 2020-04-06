@@ -248,7 +248,7 @@ public class PedidoService {
 			for(j = 0 ; j < lista.get(i).getItens().size();j++) {
 				for(k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
 					PedidoProdutoKey chave = new PedidoProdutoKey();
-					chave.setPedidoCodigo(lista.get(i).getCodigo());
+					//chave.setPedidoCodigo(lista.get(i).getCodigo());
 					chave.setProdutoCodigo(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getCodigo());
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setVisible(1);
@@ -342,6 +342,15 @@ public class PedidoService {
 		return lista;
 	}
 	
+	public List<PedidoProduto> somandoPedidos(List<PedidoProduto> lista){
+		for(int i =0; i < lista.size(); i++) {
+			if(lista.get(i).getId().getPedidoCodigo() != null) {
+				lista.get(i).getProduto().setQuantidadeMax(lista.get(i).getProduto().getQuantidadeMax() - lista.get(i).getQuantidade());
+			}
+		}
+		return lista;
+	}
+	
 	
 	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista){
 		lista = inserindoEstoqueMinAsComposicoes(lista);
@@ -377,14 +386,6 @@ public class PedidoService {
 							}
 						}
 					}
-				}else {
-					if(!produtosDebate.contains(lista.get(i).getProduto())) {
-						produtosDebate.add(lista.get(i).getProduto());
-						produto = setandoQuantidade(0,lista.get(i).getProduto(), (lista.get(i).getQuantidade() - lista.get(i).getProduto().getQuantidadeAtual()));
-					}else {
-						produto = setandoQuantidade(1,lista.get(i).getProduto(), lista.get(i).getQuantidade());	
-					}
-					lista.get(i).setProduto(produto);
 				}
 			}
 		}
@@ -435,6 +436,7 @@ public class PedidoService {
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
 		lista = inserindoEstoqueMinimo(lista);
+		lista = somandoPedidos(lista);
 		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
