@@ -15,6 +15,7 @@ import com.LoboProject.domain.PedidoProdutoKey;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.SimpleEnum;
 import com.LoboProject.domain.Usuario;
+import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.repository.ProdutoRepository;
@@ -38,6 +39,9 @@ public class PedidoService {
 	
 	@Autowired
 	private SetorRepository setorRepository;
+	
+	@Autowired
+	private ComposicaoRepository composicaoRepository;
 	
 	public List<Pedido> listarSeparadamente(String string){
 		if(string.equals("FILA")) {
@@ -357,6 +361,40 @@ public class PedidoService {
 		return lista;
 	}
 	
+	public List<PedidoProduto> somando(List<PedidoProduto> lista){
+		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+		for(int i = 0; i < listaPedidos.size(); i++) {
+			for(int j = 0;  j< listaPedidos.size(); j++) {
+				if(listaPedidos.get(i).getProduto().getCodigo().equals(listaPedidos.get(j).getProduto().getCodigo()) && (i != j)) {
+					listaPedidos.get(j).setQuantidade(listaPedidos.get(j).getQuantidade());
+					listaPedidos.remove(i);
+					if(i > 0)i--;
+					else i=0;
+				}	
+			}
+		}
+		
+		for(int i =0 ; i < lista.size(); i++) {
+			for(int j = 0; j < listaPedidos.size(); j++) {
+				if(lista.get(i).getProduto().getCodigo().equals(listaPedidos.get(j).getProduto().getCodigo())) {
+					if(lista.get(i).getProduto().getQuantidadeMax() != (-(listaPedidos.get(j).getQuantidade() + listaPedidos.get(j).getQuantidadeTotalEstoqueMin()))) {
+						lista.get(i).getProduto().setQuantidadeMax(lista.get(i).getProduto().getQuantidadeMax() - listaPedidos.get(j).getQuantidade());
+						if(lista.get(i).getProduto().getComposicao() != null) {
+							for(int k = 0; k < lista.get(i).getProduto().getComposicao().size(); k++) {
+								for(int x =0 ; x < lista.size(); x++) {
+									if(lista.get(x).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(k).getProdutoParte().getCodigo())) {
+										lista.get(x).getProduto().setQuantidadeMax(lista.get(x).getProduto().getQuantidadeMax() - (listaPedidos.get(j).getQuantidade() * lista.get(i).getProduto().getComposicao().get(k).getQuantidade()));								}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return lista;
+	}
+	
+	
 	public Produto setandoQuantidade(int op, Produto produto, long l) {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
@@ -406,9 +444,6 @@ public class PedidoService {
 				}
 				 lista.get(i).getProduto().setQuantidadeMax((long)(lista.get(i).getProduzir() - (lista.get(i).getQuantidadeTotalPedidos() + lista.get(i).getQuantidadeTotalEstoqueMin())));
 			}
-			
-		
-			
 			//	
 		}
 		
@@ -437,6 +472,8 @@ public class PedidoService {
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
 		lista = inserindoEstoqueMinimo(lista);
+		lista = somando(lista);
+		
 		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
