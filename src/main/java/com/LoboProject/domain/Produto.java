@@ -37,7 +37,7 @@ public class Produto {
 	private Long quantidadeAcumulada = (long) 0;
 	
 	@Transient 
-	private Long quantidadePai = (long) 0;
+	private Long quantidadePedidoDireto = (long) 0;
 	
 	
 	@ManyToOne

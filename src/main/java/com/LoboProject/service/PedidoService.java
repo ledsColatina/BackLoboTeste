@@ -7,21 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import com.LoboProject.domain.Pedido;
 import com.LoboProject.domain.PedidoProduto;
 import com.LoboProject.domain.PedidoProdutoKey;
 import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.SimpleEnum;
 import com.LoboProject.domain.Usuario;
-import com.LoboProject.repository.ComposicaoRepository;
 import com.LoboProject.repository.PedidoProdutoRepository;
 import com.LoboProject.repository.PedidoRepository;
 import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.repository.SetorRepository;
 import com.LoboProject.repository.UsuarioRepository;
-import com.LoboProject.resource.PedidoResource;
 
 @Service
 public class PedidoService {
@@ -254,7 +250,7 @@ public class PedidoService {
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setVisible(1);
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-					pedidoProduto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
+					pedidoProduto.setQuantidade((int)((lista.get(i).getItens().get(j).getQuantidade() - lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()) * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
 					pedidoProduto.setQuantidadeTotalEstoqueMin((int)(pedidoProduto.getProduto().getQuantidadeMin() - 0));
 					lista.get(i).getItens().add(pedidoProduto);
 					
@@ -436,7 +432,7 @@ public class PedidoService {
 		long valor = 0;
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getProduto().getQuantidadePai());
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getProduto().getQuantidadePedidoDireto());
 				//valor = produto.getQuantidadeMax();
 				lista.remove(lista.get(x));
 			}else {
@@ -481,7 +477,7 @@ public class PedidoService {
 	
 	public List<PedidoProduto> setarCerto(List<PedidoProduto> aux){
 		for(int i = 0; i < aux.size(); i++) {
-			aux.get(i).getProduto().setQuantidadePai((long) aux.get(i).getQuantidade()); 
+			aux.get(i).getProduto().setQuantidadePedidoDireto((long) aux.get(i).getQuantidade()); 
 		}
 		return aux;
 	}
