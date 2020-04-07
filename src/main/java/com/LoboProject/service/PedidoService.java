@@ -436,9 +436,9 @@ public class PedidoService {
 		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				//valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
+				valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
 				//valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
-				valor = produto.getQuantidadeMax();
+				//valor = produto.getQuantidadeMax();
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
