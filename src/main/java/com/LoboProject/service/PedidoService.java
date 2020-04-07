@@ -453,7 +453,7 @@ public class PedidoService {
 					
 				}
 				//valor = produto.getQuantidadeMax();
-				lista.remove(lista.get(x));
+				//lista.remove(lista.get(x));
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
