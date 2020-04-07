@@ -420,7 +420,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-								produto = aa(listaPedidos, produto);
+								//produto = aa(listaPedidos, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
