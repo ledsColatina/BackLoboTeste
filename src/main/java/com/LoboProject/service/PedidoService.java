@@ -433,9 +433,8 @@ public class PedidoService {
 		long valor = 0;
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				//valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
-				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
-				//valor = produto.getQuantidadeMax();
+				//valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+				valor = produto.getQuantidadeMax();
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
@@ -475,24 +474,12 @@ public class PedidoService {
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
-	public ResponseEntity<List<Pedido>> buscarDemandasFilho(String username){
-		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
-		for(int i = 0; i < lista.size(); i++) {
-			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
-		}
-		lista = ordernarPorPrioridade(lista);
-		lista.addAll(estoqueMin(username));
-		lista.add(pedidoOriginal(username));
-		lista = quebrarDemandas(lista, username);
-		lista = formatarTirandoRepetidos(lista, username);
-		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
-	}
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List<Pedido> aux = buscarDemandasFilho(username).getBody();
-		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-2).getItens()));
-		for(int i = 0; i < aux.size()-1; i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
+		List<Pedido> aux = buscarDemandas(username).getBody();
+		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
+		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
