@@ -352,8 +352,8 @@ public class PedidoService {
 	}
 	
 	
-	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos, List<PedidoProduto> lista2){
-		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos, lista2);
+	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos){
+		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos);
 		return lista;
 	}
 	
@@ -402,7 +402,7 @@ public class PedidoService {
 		return produto;
 	}
 	
-	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos, List<PedidoProduto> listaPedidos2){
+	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos){
 		int i,j;
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
@@ -418,7 +418,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-								produto = aa(listaPedidos2, produto);
+								produto = aa(listaPedidos, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -483,8 +483,8 @@ public class PedidoService {
 	}
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
-		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List<PedidoProduto> lista2 = buscarDemandasFilho().getBody();
+	//	List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
+		List<PedidoProduto> lista = buscarDemandasFilho().getBody();
 		List<Pedido> aux = buscarDemandas(username).getBody();
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
@@ -492,7 +492,7 @@ public class PedidoService {
 		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		lista = inserindoEstoqueMinimo(lista, listaPedidos, lista2);
+		lista = inserindoEstoqueMinimo(lista, listaPedidos);
 		//lista = somando(lista);
 		
 		lista = formatarRepetidos(lista);
