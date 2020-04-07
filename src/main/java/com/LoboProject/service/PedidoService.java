@@ -413,8 +413,11 @@ public class PedidoService {
 						for(int k =0 ; k  < lista.size(); k++) {
 							if(lista.get(k).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getCodigo())) {
 								if(!produtosDebate.contains(lista.get(k).getProduto())) {
-									produtosDebate.add(lista.get(k).getProduto());
-									produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
+									if(!listaPedidos.contains(lista.get(k))) {
+										produtosDebate.add(lista.get(k).getProduto());
+										produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
+									}else produto = aa(listaPedidos, lista.get(k).getProduto());
+									
 								}else {
 									if(!listaPedidos.contains(lista.get(k))) {
 										produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
