@@ -352,8 +352,8 @@ public class PedidoService {
 	}
 	
 	
-	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos, List<PedidoProduto> x){
-		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos, x);
+	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos){
+		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos);
 		return lista;
 	}
 	
@@ -402,7 +402,7 @@ public class PedidoService {
 		return produto;
 	}
 	
-	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos,List<PedidoProduto> x){
+	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos){
 		int i,j;
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
@@ -416,9 +416,12 @@ public class PedidoService {
 									produtosDebate.add(lista.get(k).getProduto());
 									produto = setandoQuantidade(0,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax()) - lista.get(i).getProduto().getComposicao().get(j).getProdutoParte().getQuantidadeAtual()));
 								}else {
-									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
+									if(!listaPedidos.contains(lista.get(k))) {
+										produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
+									}
+									else produto = lista.get(k).getProduto();
 								}
-								produto = aa(x, produto);
+								produto = aa(listaPedidos, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -433,8 +436,8 @@ public class PedidoService {
 		long valor = 0;
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				//valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
-				valor = produto.getQuantidadeMax();
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+				//valor = produto.getQuantidadeMax();
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
@@ -484,7 +487,7 @@ public class PedidoService {
 		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		lista = inserindoEstoqueMinimo(lista, listaPedidos, aux.get(aux.size()-1).getItens());
+		lista = inserindoEstoqueMinimo(lista, listaPedidos);
 		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
