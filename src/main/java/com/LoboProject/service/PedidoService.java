@@ -420,7 +420,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-								//produto = aa(listaPedidos, produto);
+								produto = aa(listaPedidos, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -433,18 +433,18 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
-		for(int i = 0; i < lista.size(); i++) {
+		/*for(int i = 0; i < lista.size(); i++) {
 			for(int j = 0;  j< lista.size(); j++) {
 				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
 					lista.get(j).setQuantidade(lista.get(i).getQuantidade() + lista.get(j).getQuantidade());
-					lista.get(j).setQuantidadeTotalPedidos(lista.get(i).getQuantidadeTotalPedidos() + lista.get(j).getQuantidadeTotalPedidos());
+					//lista.get(j).setQuantidadeTotalPedidos(lista.get(i).getQuantidadeTotalPedidos() + lista.get(j).getQuantidadeTotalPedidos());
 					lista.remove(i);
 					if(i > 0)i--;
 					else i=0;
 				}
 				
 			}
-		}
+		}*/
 		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
