@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Pedido;
 import com.LoboProject.domain.PedidoProduto;
 import com.LoboProject.domain.PedidoProdutoKey;
@@ -41,9 +40,6 @@ public class PedidoService {
 	
 	@Autowired
 	private SetorRepository setorRepository;
-	
-	@Autowired
-	private ComposicaoRepository composicaoRepository;
 	
 	public List<Pedido> listarSeparadamente(String string){
 		if(string.equals("FILA")) {
@@ -398,10 +394,10 @@ public class PedidoService {
 	public Produto setandoQuantidade(int op, Produto produto, long l) {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
-			produto.setQuantidadePai(produto.getQuantidadeMax() + l);
+			//produto.setQuantidadePai(produto.getQuantidadeMax() + l);
 		}else {
 			produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
-			produto.setQuantidadePai(produto.getQuantidadePai() + produto.getQuantidadeMax() + l);
+			//produto.setQuantidadePai(produto.getQuantidadePai() + produto.getQuantidadeMax() + l);
 		}
 		return produto;
 	}
@@ -438,23 +434,11 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
-		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
-				List<Composicao> pais = composicaoRepository.findAllByProdutoParte_codigo(lista.get(x).getProduto().getCodigo());
-				
-				for(int j = 0 ; j < lista.size(); j++) {
-					for(int k = 0; k < pais.size(); k++) {
-						if(lista.get(j).getProduto().getCodigo().equals(pais.get(k).getId_produto_todo())) {
-							valor = valor + lista.get(j).getQuantidade();
-							lista.remove(lista.get(j));
-						}
-					}
-					
-				}
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getProduto().getQuantidadePai());
 				//valor = produto.getQuantidadeMax();
-				//
+				lista.remove(lista.get(x));
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
@@ -485,13 +469,21 @@ public class PedidoService {
 	public ResponseEntity<List<Pedido>> buscarDemandas(String username){
 		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
 		for(int i = 0; i < lista.size(); i++) {
-			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
+			//lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo())));
+			lista.get(i).setItens(setarCerto(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo())));
 		}
 		lista = ordernarPorPrioridade(lista);
 		lista.addAll(estoqueMin(username));
 		lista = quebrarDemandas(lista, username);
 		lista = formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
+	}
+	
+	public List<PedidoProduto> setarCerto(List<PedidoProduto> aux){
+		for(int i = 0; i < aux.size(); i++) {
+			aux.get(i).getProduto().setQuantidadePai((long) aux.get(i).getQuantidade()); 
+		}
+		return aux;
 	}
 	
 	

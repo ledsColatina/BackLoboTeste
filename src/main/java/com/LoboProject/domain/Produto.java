@@ -39,6 +39,7 @@ public class Produto {
 	@Transient 
 	private Long quantidadePai = (long) 0;
 	
+	
 	@ManyToOne
 	@JoinColumn(name = "id_Setor")
 	private Setor setor;
