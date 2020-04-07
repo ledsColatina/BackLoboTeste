@@ -250,7 +250,7 @@ public class PedidoService {
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setVisible(1);
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
-					pedidoProduto.setQuantidade((int)((lista.get(i).getItens().get(j).getQuantidade() - lista.get(i).getItens().get(j).getProduto().getQuantidadeAtual()) * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
+					pedidoProduto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
 					pedidoProduto.setQuantidadeTotalEstoqueMin((int)(pedidoProduto.getProduto().getQuantidadeMin() - 0));
 					lista.get(i).getItens().add(pedidoProduto);
 					
