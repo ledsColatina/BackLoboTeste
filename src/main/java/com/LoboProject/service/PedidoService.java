@@ -433,23 +433,11 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
-		/*for(int i = 0; i < lista.size(); i++) {
-			for(int j = 0;  j< lista.size(); j++) {
-				if(lista.get(i).getProduto().getCodigo().equals(lista.get(j).getProduto().getCodigo()) && (i != j)) {
-					lista.get(j).setQuantidade(lista.get(i).getQuantidade() + lista.get(j).getQuantidade());
-					//lista.get(j).setQuantidadeTotalPedidos(lista.get(i).getQuantidadeTotalPedidos() + lista.get(j).getQuantidadeTotalPedidos());
-					lista.remove(i);
-					if(i > 0)i--;
-					else i=0;
-				}
-				
-			}
-		}*/
 		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				valor = produto.getQuantidadeMax();
-				//valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+				//valor = produto.getQuantidadeMax();
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
