@@ -448,12 +448,13 @@ public class PedidoService {
 					for(int k = 0; k < pais.size(); k++) {
 						if(lista.get(j).getProduto().getCodigo().equals(pais.get(k).getId_produto_todo())) {
 							valor = valor + lista.get(j).getQuantidade();
+							lista.remove(lista.get(j));
 						}
 					}
 					
 				}
 				//valor = produto.getQuantidadeMax();
-				//lista.remove(lista.get(x));
+				//
 			}else {
 				valor = produto.getQuantidadeMax();
 			}
