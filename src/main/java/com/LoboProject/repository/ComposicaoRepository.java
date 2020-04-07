@@ -11,7 +11,7 @@ public interface ComposicaoRepository extends JpaRepository<Composicao, Long>{
 
 	void deleteByprodutoParte_codigo(String id);
 
-	Object findAllByProdutoParte_codigo(String string);
+	List<Composicao> findAllByProdutoParte_codigo(String string);
 	
 	public List<ResumoComposicao> resumir();
 	

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.LoboProject.domain.Composicao;
 import com.LoboProject.domain.Pedido;
 import com.LoboProject.domain.PedidoProduto;
 import com.LoboProject.domain.PedidoProdutoKey;
@@ -40,6 +41,9 @@ public class PedidoService {
 	
 	@Autowired
 	private SetorRepository setorRepository;
+	
+	@Autowired
+	private ComposicaoRepository composicaoRepository;
 	
 	public List<Pedido> listarSeparadamente(String string){
 		if(string.equals("FILA")) {
@@ -434,9 +438,20 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
+		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
 				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+				List<Composicao> pais = composicaoRepository.findAllByProdutoParte_codigo(lista.get(x).getProduto().getCodigo());
+				
+				for(int j = 0 ; j < lista.size(); j++) {
+					for(int k = 0; k < pais.size(); k++) {
+						if(lista.get(j).getProduto().getCodigo().equals(pais.get(k).getId_produto_todo())) {
+							valor = valor + lista.get(j).getQuantidade();
+						}
+					}
+					
+				}
 				//valor = produto.getQuantidadeMax();
 				lista.remove(lista.get(x));
 			}else {
