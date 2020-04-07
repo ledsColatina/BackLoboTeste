@@ -252,11 +252,9 @@ public class PedidoService {
 			for(j = 0 ; j < lista.get(i).getItens().size();j++) {
 				for(k = 0; k < lista.get(i).getItens().get(j).getProduto().getComposicao().size(); k++) {
 					PedidoProdutoKey chave = new PedidoProdutoKey();
-					//chave.setPedidoCodigo(lista.get(i).getCodigo());
 					chave.setProdutoCodigo(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte().getCodigo());
 					PedidoProduto pedidoProduto = new PedidoProduto();
 					pedidoProduto.setVisible(1);
-					//pedidoProduto.setPedido(lista.get(i));
 					pedidoProduto.setProduto(lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getProdutoParte());
 					pedidoProduto.setQuantidade((int)(lista.get(i).getItens().get(j).getQuantidade() * lista.get(i).getItens().get(j).getProduto().getComposicao().get(k).getQuantidade()));
 					pedidoProduto.setQuantidadeTotalEstoqueMin((int)(pedidoProduto.getProduto().getQuantidadeMin() - 0));
@@ -422,7 +420,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-								//produto = aa(listaPedidos, produto);
+								produto = aa(listaPedidos, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -450,15 +448,11 @@ public class PedidoService {
 		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				System.out.println(produto.getDescricao());
-				System.out.println(produto.getQuantidadePai());
-				System.out.println(lista.get(x).getQuantidadeTotalEstoqueMin());
-				System.out.println( lista.get(x).getQuantidade());
-				valor = (valor + lista.get(x).getQuantidadeTotalPedidos());
-				System.out.println(valor);
-				//break;
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+			}else {
+				valor = produto.getQuantidadeMax();
 			}
-			produto.setQuantidadeMax(produto.getQuantidadePai() - lista.get(x).getQuantidadeTotalEstoqueMin() - valor);
+			produto.setQuantidadeMax(valor);
 		}
 		 return produto;
 	}
