@@ -419,9 +419,9 @@ public class PedidoService {
 									if(!listaPedidos.contains(lista.get(k))) {
 										produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 									}
-									else produto = lista.get(k).getProduto();
+									else produto = aa(listaPedidos, lista.get(k).getProduto());
 								}
-								produto = aa(listaPedidos, produto);
+								
 								lista.get(k).setProduto(produto);
 							}
 						}
