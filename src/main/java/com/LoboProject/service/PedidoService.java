@@ -352,8 +352,8 @@ public class PedidoService {
 	}
 	
 	
-	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos){
-		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos);
+	public List<PedidoProduto> inserindoEstoqueMinimo(List<PedidoProduto> lista, List<PedidoProduto> pedidos, List<PedidoProduto> x){
+		lista = inserindoEstoqueMinAsComposicoes(lista, pedidos, x);
 		return lista;
 	}
 	
@@ -402,7 +402,7 @@ public class PedidoService {
 		return produto;
 	}
 	
-	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos){
+	public List<PedidoProduto> inserindoEstoqueMinAsComposicoes(List<PedidoProduto> lista, List<PedidoProduto> listaPedidos,List<PedidoProduto> x){
 		int i,j;
 		Produto produto;
 		List<Produto> produtosDebate = new ArrayList<Produto>();
@@ -418,7 +418,7 @@ public class PedidoService {
 								}else {
 									produto = setandoQuantidade(1,lista.get(k).getProduto(), (lista.get(i).getProduto().getComposicao().get(j).getQuantidade() * (-lista.get(i).getProduto().getQuantidadeMax())));	
 								}
-								produto = aa(listaPedidos, produto);
+								produto = aa(x, produto);
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -431,7 +431,6 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
-		lista = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
 				//valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
@@ -464,37 +463,41 @@ public class PedidoService {
 		return lista;
 	}
 	
-	public ResponseEntity<List<Pedido>> buscarDemandas(@PathVariable String username){
+	public ResponseEntity<List<Pedido>> buscarDemandas(String username){
 		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
-		List <Pedido> lista2 = lista;
 		lista = ordernarPorPrioridade(lista);
 		lista.addAll(estoqueMin(username));
 		lista = quebrarDemandas(lista, username);
 		lista = formatarTirandoRepetidos(lista, username);
-		return !lista.isEmpty() ? ResponseEntity.ok(lista2) : ResponseEntity.notFound().build() ;
+		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
-	public ResponseEntity<List<PedidoProduto>> buscarDemandasFilho(){
-		List<PedidoProduto> lista = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+	public ResponseEntity<List<Pedido>> buscarDemandasFilho(String username){
+		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
+		for(int i = 0; i < lista.size(); i++) {
+			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
+		}
+		lista = ordernarPorPrioridade(lista);
+		lista.addAll(estoqueMin(username));
+		lista.add(pedidoOriginal(username));
+		lista = quebrarDemandas(lista, username);
+		lista = formatarTirandoRepetidos(lista, username);
 		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
 	}
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
-	//	List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		List<PedidoProduto> lista = buscarDemandasFilho().getBody();
-		List<Pedido> aux = buscarDemandas(username).getBody();
-		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
-		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
+		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
+		List<Pedido> aux = buscarDemandasFilho(username).getBody();
+		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-2).getItens()));
+		for(int i = 0; i < aux.size()-1; i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
 		lista = somandoPedidos(lista);
 		lista = setarQuantidadeEmEstoqueCorreta(lista);
 		lista = formatarComposicaoSemSomar(lista);
-		lista = inserindoEstoqueMinimo(lista, listaPedidos);
-		//lista = somando(lista);
-		
+		lista = inserindoEstoqueMinimo(lista, listaPedidos, aux.get(aux.size()-1).getItens());
 		lista = formatarRepetidos(lista);
 		return ResponseEntity.ok().body(lista);
 	}
@@ -611,7 +614,6 @@ public class PedidoService {
 			PedidoProduto item = new PedidoProduto();
 			item.setProduto(lista.get(i));
 			item.setPedido(pedido);
-	//		item.setQuantidadeTotalEstoqueMin(lista.get(i).getQuantidadeMin().intValue());
 			item.setQuantidade(lista.get(i).getQuantidadeMin().intValue());
 			itens.add(item);
 		}
@@ -619,6 +621,18 @@ public class PedidoService {
 		List<Pedido> pedidos = new ArrayList<>();
 		pedidos.add(pedido);
 		return pedidos;
+	}
+	
+	public Pedido pedidoOriginal(String username){
+		Pedido pedido = new Pedido();
+		pedido.setCodigo((long) 909091);
+		pedido.setNomeCliente("Estoque Minimo");
+		pedido.setPrioridade((long)99999);
+		pedido.setEndereco("Local");
+		pedido.setStatus(SimpleEnum.Status.EM_PRODUCAO);
+		List<PedidoProduto> itens = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+		pedido.setItens(itens);
+		return pedido;
 	}
 	
 	
