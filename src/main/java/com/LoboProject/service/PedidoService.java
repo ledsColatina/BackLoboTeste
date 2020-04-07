@@ -436,8 +436,8 @@ public class PedidoService {
 		
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
-				valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
-				//valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
+				//valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
+				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getQuantidade());
 				//valor = produto.getQuantidadeMax();
 			}else {
 				valor = produto.getQuantidadeMax();
@@ -471,11 +471,12 @@ public class PedidoService {
 		for(int i = 0; i < lista.size(); i++) {
 			lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo()));
 		}
+		List <Pedido> lista2 = lista;
 		lista = ordernarPorPrioridade(lista);
 		lista.addAll(estoqueMin(username));
 		lista = quebrarDemandas(lista, username);
 		lista = formatarTirandoRepetidos(lista, username);
-		return !lista.isEmpty() ? ResponseEntity.ok(lista) : ResponseEntity.notFound().build() ;
+		return !lista.isEmpty() ? ResponseEntity.ok(lista2) : ResponseEntity.notFound().build() ;
 	}
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
