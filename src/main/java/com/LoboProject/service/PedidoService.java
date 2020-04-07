@@ -431,6 +431,7 @@ public class PedidoService {
 	
 	public Produto aa (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
+		lista = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
 				//valor = (long)(produto.getQuantidadeMax() + lista.get(x).getQuantidadeTotalPedidos() + lista.get(x).getProduto().getQuantidadeAcumulada() + lista.get(x).getProduto().getQuantidadeMin());
@@ -478,7 +479,7 @@ public class PedidoService {
 	
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(String username, List<PedidoProduto> listaPedidos ){
 		List<PedidoProduto> lista = new ArrayList<PedidoProduto>();
-		//List<Pedido> aux = buscarDemandas(username).getBody();
+		List<Pedido> aux = buscarDemandas(username).getBody();
 		lista.addAll(estoqueMinParaDemandas(lista, aux.get(aux.size()-1).getItens()));
 		for(int i = 0; i < aux.size(); i++)  lista.addAll(atualizarQtdP(aux.get(i).getItens()));
 		lista = formatarComposicaoSemSomar(lista);
