@@ -1,5 +1,6 @@
 package com.LoboProject.service;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +68,7 @@ public class ProducaoService {
 	}
 	
 	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
-	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(String id){
+/*	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(String id){
 		List<Producao> producoes = producaoRepository.findByUltimasProducoes();
 		List<Relatorios> listaRelatorio = new ArrayList<>();
 		int cont = 0;
@@ -82,6 +83,32 @@ public class ProducaoService {
 			}
 
 			if((producoes.get(i).getProduto().getSetor().getDescricao().equals(id)) && ((listaRelatorio.isEmpty()) || (cont != 1))) {
+				Relatorios aux = new Relatorios();
+				aux.setName((producoes.get(i).getProduto().getDescricao()));
+				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));
+				listaRelatorio.add(aux);
+			}
+		}
+		
+		return listaRelatorio;
+	}*/
+	
+	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
+	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(Date periodo,Date periodo2, String descricaoSetor){
+		List<Producao> producoes = producaoRepository.findAllByDataLessThanEqualAndDataGreaterThanEqual(periodo, periodo2);
+		List<Relatorios> listaRelatorio = new ArrayList<>();
+		int cont = 0;
+		
+		for(int i = 0; i < producoes.size(); i++) {
+			cont = 0;
+			for(int j = 0; j < listaRelatorio.size(); j++) {
+				if((!listaRelatorio.isEmpty()) &&(listaRelatorio.get(j).getName().equals(producoes.get(i).getProduto().getDescricao()))) {
+					listaRelatorio.get(j).setValue(((int)(listaRelatorio.get(j).getValue() + producoes.get(i).getQuantidade())));
+					cont = 1;
+				}
+			}
+
+			if((producoes.get(i).getProduto().getSetor().getDescricao().equals(descricaoSetor)) && ((listaRelatorio.isEmpty()) || (cont != 1))) {
 				Relatorios aux = new Relatorios();
 				aux.setName((producoes.get(i).getProduto().getDescricao()));
 				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));

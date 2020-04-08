@@ -1,7 +1,7 @@
 package com.LoboProject.resource;
 
+import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.LoboProject.domain.Producao;
-import com.LoboProject.domain.Produto;
 import com.LoboProject.domain.Relatorios;
 import com.LoboProject.repository.ProducaoRepository;
-import com.LoboProject.repository.ProdutoRepository;
 import com.LoboProject.repository.UsuarioRepository;
 import com.LoboProject.service.ProducaoService;
 import org.springframework.data.domain.Page;
@@ -32,9 +30,6 @@ public class ProducaoResource {
 	
 	@Autowired
 	private ProducaoService producaoService;
-	
-	@Autowired
-	private ProdutoRepository produtoRepository;
 	
 	@Autowired
 	private UsuarioRepository userRepository;
@@ -53,10 +48,17 @@ public class ProducaoResource {
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping("/relatorioProdutos/{periodo}")
+/*	@GetMapping("/relatorioProdutos/{periodo}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
 	public  ResponseEntity<List<?>> listarProducao30diasProdutoSetor(@PathVariable String periodo){
 		List<Relatorios> producao = producaoService.agruparComUltimosDiasPorProdutoSetor(periodo);
+		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
+	}*/
+	
+	@GetMapping("/relatorioProdutos/{periodo}/{periodo2}/{descricaoSetor}")
+	@PreAuthorize("hasAnyAuthority('ADMIN')")
+	public  ResponseEntity<List<?>> listarProducao30diasProdutoSetor(@PathVariable Date periodo, @PathVariable Date periodo2,@PathVariable String descricaoSetor){
+		List<Relatorios> producao = producaoService.agruparComUltimosDiasPorProdutoSetor(periodo, periodo2, descricaoSetor);
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
@@ -64,23 +66,6 @@ public class ProducaoResource {
 	public ResponseEntity<List<Producao>> listar50Producoes(){
 		List<Producao> producao = producaoRepository.findTop50ByOrderByCodigoDesc();
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
-	}
-	
-	@GetMapping("/naoUsar")
-	public ResponseEntity<String> buscarDemandas(){
-		int k = 10000;
-		Optional<Produto> x = produtoRepository.findById("e");
-		for(int i =0; i < 1000; i++) {
-			Producao prod = new Producao();
-			prod.setCodigo((long)k);
-			prod.setNome("admin");
-			prod.setProduto(x.get());
-			prod.setData(new java.util.Date(System.currentTimeMillis()));
-			prod.setQuantidade((long) 1);
-			k++;
-			producaoRepository.save(prod);
-		}
-		return ResponseEntity.ok().body("ok");
 	}
 	
 	
