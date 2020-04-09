@@ -69,8 +69,9 @@ public class ProducaoService {
 	
 
 	//Agrupa_Pedidos_por_Data_e_Setor_para_gerar_relatório
-	public List<Relatorios> agruparEntreDiasPorSetor(Date data, Date data2){
-		List<Producao> producoes = producaoRepository.findAllByDataLessThanEqualAndDataGreaterThanEqual(data, data2);
+	public List<Relatorios> agruparEntreDiasPorSetor(Date periodo, Date periodo2){
+		//List<Producao> producoes = producaoRepository.findAllByDataLessThanAndDataGreaterThanEqual(data, data2);
+		List<Producao> producoes = producaoRepository.findAllByDataBetween(periodo, periodo2);
 		List<Relatorios> listaRelatorio = new ArrayList<>();
 		int cont = 0;
 		
@@ -97,7 +98,7 @@ public class ProducaoService {
 	
 	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
 	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(Date periodo,Date periodo2, String descricaoSetor){
-		List<Producao> producoes = producaoRepository.findAllByDataLessThanEqualAndDataGreaterThanEqual(periodo, periodo2);
+		List<Producao> producoes = producaoRepository.findAllByDataBetween(periodo, periodo2);
 		List<Relatorios> listaRelatorio = new ArrayList<>();
 		int cont = 0;
 		

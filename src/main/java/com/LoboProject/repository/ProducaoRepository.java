@@ -24,7 +24,9 @@ public interface ProducaoRepository extends JpaRepository<Producao, Long>{
 	@Query(value = " select * from producao where producao.data BETWEEN to_date( :data, 'dd/mm/yyyy') and to_date( :data2, 'dd/mm/yyyy')", nativeQuery = true)
 	List<Producao> findByUltimasProducoesA(String data, String data2);
 	
-	List<Producao> findAllByDataLessThanEqualAndDataGreaterThanEqual(Date data, Date data2);
+	List<Producao> findAllByDataLessThanAndDataGreaterThanEqual(Date data, Date data2);
+	
+	List<Producao> findAllByDataBetween(Date data, Date data2);
 	
 	@Query(value = " select * from producao where producao.id_produto.setor = ? producao.data BETWEEN NOW() - INTERVAL '30' DAY AND NOW();", nativeQuery = true)
 	List<Producao> findByUltimasProducoesProdutos(Long valor);
