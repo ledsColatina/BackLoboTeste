@@ -48,12 +48,12 @@ public class ProducaoResource {
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
 	}
 	
-/*	@GetMapping("/relatorioProdutos/{periodo}")
+	@GetMapping("/relatorioSetor/{periodo}/{periodo2}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")
-	public  ResponseEntity<List<?>> listarProducao30diasProdutoSetor(@PathVariable String periodo){
-		List<Relatorios> producao = producaoService.agruparComUltimosDiasPorProdutoSetor(periodo);
+	public  ResponseEntity<List<?>> listarProducaoEntrediasSetor(@PathVariable Date periodo, @PathVariable Date periodo2){
+		List<Relatorios> producao = producaoService.agruparEntreDiasPorSetor(periodo, periodo2);
 		return !producao.isEmpty() ? ResponseEntity.ok(producao) : ResponseEntity.noContent().build();
-	}*/
+	}
 	
 	@GetMapping("/relatorioProdutos/{periodo}/{periodo2}/{descricaoSetor}")
 	@PreAuthorize("hasAnyAuthority('ADMIN')")

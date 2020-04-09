@@ -67,31 +67,33 @@ public class ProducaoService {
 		return listaRelatorio;
 	}
 	
-	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
-/*	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(String id){
-		List<Producao> producoes = producaoRepository.findByUltimasProducoes();
+
+	//Agrupa_Pedidos_por_Data_e_Setor_para_gerar_relatório
+	public List<Relatorios> agruparEntreDiasPorSetor(Date data, Date data2){
+		List<Producao> producoes = producaoRepository.findAllByDataLessThanEqualAndDataGreaterThanEqual(data, data2);
 		List<Relatorios> listaRelatorio = new ArrayList<>();
 		int cont = 0;
 		
 		for(int i = 0; i < producoes.size(); i++) {
 			cont = 0;
 			for(int j = 0; j < listaRelatorio.size(); j++) {
-				if((!listaRelatorio.isEmpty()) &&(listaRelatorio.get(j).getName().equals(producoes.get(i).getProduto().getDescricao()))) {
+				if((!listaRelatorio.isEmpty())  && (listaRelatorio.get(j).getName().equals(producoes.get(i).getProduto().getSetor().getDescricao()))) {
 					listaRelatorio.get(j).setValue(((int)(listaRelatorio.get(j).getValue() + producoes.get(i).getQuantidade())));
 					cont = 1;
 				}
 			}
 
-			if((producoes.get(i).getProduto().getSetor().getDescricao().equals(id)) && ((listaRelatorio.isEmpty()) || (cont != 1))) {
+			if((listaRelatorio.isEmpty()) || (cont != 1)) {
 				Relatorios aux = new Relatorios();
-				aux.setName((producoes.get(i).getProduto().getDescricao()));
+				aux.setName((producoes.get(i).getProduto().getSetor().getDescricao()));
 				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));
 				listaRelatorio.add(aux);
 			}
 		}
 		
 		return listaRelatorio;
-	}*/
+	}
+	
 	
 	//Agrupa_Pedidos_por_Data_e_Produtos_para_gerar_relatório
 	public List<Relatorios> agruparComUltimosDiasPorProdutoSetor(Date periodo,Date periodo2, String descricaoSetor){
@@ -111,7 +113,7 @@ public class ProducaoService {
 			if((producoes.get(i).getProduto().getSetor().getDescricao().equals(descricaoSetor)) && ((listaRelatorio.isEmpty()) || (cont != 1))) {
 				Relatorios aux = new Relatorios();
 				aux.setName((producoes.get(i).getProduto().getDescricao()));
-				aux.setValue(((int) (producoes.get(i).getQuantidade() + 0)));
+				aux.setValue(producoes.get(i).getQuantidade().intValue());
 				listaRelatorio.add(aux);
 			}
 		}
