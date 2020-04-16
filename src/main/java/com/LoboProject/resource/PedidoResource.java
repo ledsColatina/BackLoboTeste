@@ -34,7 +34,7 @@ public class PedidoResource {
 	private PedidoRepository pedidorepository;
 
 	@Autowired
-	private PedidoProdutoRepository pedidoProdutorepository;
+	private PedidoProdutoRepository pedidoProdutoRepository;
 	
 	@Autowired
 	private PedidoService pedidoService;
@@ -71,7 +71,7 @@ public class PedidoResource {
 	@GetMapping("/demandasProd/{username}")
 	@PreAuthorize("hasAuthority('USER')")
 	public ResponseEntity<List<PedidoProduto>> buscarDemandasProduto(@PathVariable String username){
-		List <PedidoProduto> listaPedidos = pedidoProdutorepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
+		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
 		return pedidoService.buscarDemandasProduto(username, listaPedidos);
 	}
 	
@@ -93,7 +93,7 @@ public class PedidoResource {
 		if (pedido.getItens().isEmpty()) return ResponseEntity.badRequest().body("\n Faltam Itens no Pedido ou alguns Itens não foram reconhecidos!");
 		pedido.setItens(null);
 		Pedido pedidoSalvo = pedidorepository.save(pedido);
-		for(int i = 0; i < lista.size(); i++) pedidoProdutorepository.save(lista.get(i));
+		pedidoProdutoRepository.saveAll(lista);
 		return ResponseEntity.ok().body(pedidoSalvo);
 	}
 	
@@ -130,7 +130,7 @@ public class PedidoResource {
 	public ResponseEntity<?> embalarPedidos(@PathVariable long codigoPedido, @PathVariable String codigo, @PathVariable int quantidade){
 		if(pedidoService.DiminuirEmbalagem(codigoPedido,codigo, quantidade).equals("OK")) {
 			PedidoProduto item = pedidoService.minimizarMovimentoChave(codigoPedido, codigo, quantidade);
-			pedidoProdutorepository.save(item);
+			pedidoProdutoRepository.save(item);
 			return ResponseEntity.ok().build();
 		}else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Estoque Insuficiente para o Pedido!!");
 	}

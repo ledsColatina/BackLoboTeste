@@ -19,10 +19,12 @@ public class ComposicaoService {
 	public List<Composicao> criarComposicao(List<Composicao> composicao) {
 		int i = 0;
 		List <Composicao>composicaoSalvo = new ArrayList<Composicao>();
+		
 		while(composicao.get(i) != null) {
-			composicaoSalvo.add( composicaoRepository.save(composicao.get(i)));
+			composicaoSalvo.add(composicao.get(i));
 			i++;
 		}
+		composicaoRepository.saveAll(composicaoSalvo);
 		return composicaoSalvo;
 	}
 	

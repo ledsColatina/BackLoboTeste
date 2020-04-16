@@ -70,7 +70,6 @@ public class ProducaoService {
 
 	//Agrupa_Pedidos_por_Data_e_Setor_para_gerar_relatório
 	public List<Relatorios> agruparEntreDiasPorSetor(Date periodo, Date periodo2){
-		//List<Producao> producoes = producaoRepository.findAllByDataLessThanAndDataGreaterThanEqual(data, data2);
 		List<Producao> producoes = producaoRepository.findAllByDataBetween(periodo, periodo2);
 		List<Relatorios> listaRelatorio = new ArrayList<>();
 		int cont = 0;

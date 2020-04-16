@@ -100,11 +100,4 @@ public class ProdutoResource {
 		produtoRepository.deleteById(id);
 	}
 	
-	@DeleteMapping("/all") 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('ADMIN')")
-	public void DeletarLoteProdutos(@RequestBody List<String> produtos) {
-		produtoService.deletarLoteProduto(produtos);
-	}
-	
 }

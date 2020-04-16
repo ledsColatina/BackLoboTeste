@@ -23,7 +23,7 @@ import com.LoboProject.repository.UsuarioRepository;
 public class PedidoService {
 
 	@Autowired
-	private PedidoRepository pedidorepository;
+	private PedidoRepository pedidoRepository;
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
@@ -39,22 +39,22 @@ public class PedidoService {
 	
 	public List<Pedido> listarSeparadamente(String string){
 		if(string.equals("FILA")) {
-			return pedidorepository.findByStatus(SimpleEnum.Status.FILA);
+			return pedidoRepository.findByStatus(SimpleEnum.Status.FILA);
 		}else if (string.equals("EM_PRODUCAO")) {
-			return pedidorepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
+			return pedidoRepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
 		}else if (string.equals("EMBALADO")) {
-			return pedidorepository.findByStatus(SimpleEnum.Status.EMBALADO);
+			return pedidoRepository.findByStatus(SimpleEnum.Status.EMBALADO);
 		}else if (string.equals("NOTA_EMITIDA")) {
-			return pedidorepository.findByStatus(SimpleEnum.Status.NOTA_EMITIDA);
+			return pedidoRepository.findByStatus(SimpleEnum.Status.NOTA_EMITIDA);
 		}else if (string.equals("DESPACHADO")) {
-			return pedidorepository.findByStatus(SimpleEnum.Status.DESPACHADO);
+			return pedidoRepository.findByStatus(SimpleEnum.Status.DESPACHADO);
 		}else {
 			return null;
 		}
 	}
 
 	public List<Pedido> listarSeparadamentePrioridade(String string){
-		List<Pedido> lista = pedidorepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
+		List<Pedido> lista = pedidoRepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
 		
 		for(int i =0 ; i < lista.size() ; i++) {
 			if(!lista.get(i).getStatus().equals(SimpleEnum.Status.EM_PRODUCAO)) {
@@ -80,17 +80,17 @@ public class PedidoService {
 	}
 	
 	public List<Pedido> criarFila (List<Pedido> pedidos){
-		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+		Optional<Pedido> ultimo = pedidoRepository.findTop1ByOrderByPrioridadeDesc();
 		Long prioridade;
 		int i = 0;
 		if(ultimo.isPresent()) {
 			for(i = 0; i < pedidos.size(); i++) {
-				ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
 				prioridade = ultimo.get().getPrioridade() + (i+1);
 				pedidos.get(i).setPrioridade(prioridade);
 				pedidos.get(i).setStatus(SimpleEnum.Status.EM_PRODUCAO);
-				pedidorepository.save(pedidos.get(i));
+				ultimo.get().setPrioridade(prioridade);
 			}
+			pedidoRepository.saveAll(pedidos);
 			return pedidos;
 		}
 		else {
@@ -100,7 +100,7 @@ public class PedidoService {
 	}
 	
 	public long listarultimaprioridade() {
-		Optional<Pedido> ultimo = pedidorepository.findTop1ByOrderByPrioridadeDesc();
+		Optional<Pedido> ultimo = pedidoRepository.findTop1ByOrderByPrioridadeDesc();
 		if(ultimo.isPresent()) {
 			System.out.println("passei " + ultimo.get().getCodigo() + "  " + ultimo.get().getPrioridade());
 			return ultimo.get().getPrioridade();
@@ -126,7 +126,7 @@ public class PedidoService {
 	}
 	
 	public PedidoProduto minimizarMovimentoChave(long codigoPedido, String codigo, int quantidade) {
-		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		Optional<Pedido> pedido = pedidoRepository.findById(codigoPedido);
 		Optional<Produto> embalagem = produtoRepository.findById(codigo);
 		PedidoProdutoKey chave = new PedidoProdutoKey();
 		chave.setPedidoCodigo(pedido.get().getCodigo());
@@ -143,7 +143,7 @@ public class PedidoService {
 	 
 	
 	public Long maiorPrioridadeStatus() {
-		List<Pedido> pedidos = pedidorepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
+		List<Pedido> pedidos = pedidoRepository.findByStatus(SimpleEnum.Status.EM_PRODUCAO);
 		Long prioridade = (long) 10000;
 		for(int i=0; i < pedidos.size(); i++) {
 			if(pedidos.get(i).getPrioridade() < prioridade){
@@ -353,47 +353,12 @@ public class PedidoService {
 		return lista;
 	}
 	
-	public List<PedidoProduto> somando(List<PedidoProduto> lista){
-		List <PedidoProduto> listaPedidos = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
-		for(int i = 0; i < listaPedidos.size(); i++) {
-			for(int j = 0;  j< listaPedidos.size(); j++) {
-				if(listaPedidos.get(i).getProduto().getCodigo().equals(listaPedidos.get(j).getProduto().getCodigo()) && (i != j)) {
-					listaPedidos.get(j).setQuantidade(listaPedidos.get(j).getQuantidade());
-					listaPedidos.remove(i);
-					if(i > 0)i--;
-					else i=0;
-				}	
-			}
-		}
-		
-		for(int i =0 ; i < lista.size(); i++) {
-			for(int j = 0; j < listaPedidos.size(); j++) {
-				if(lista.get(i).getProduto().getCodigo().equals(listaPedidos.get(j).getProduto().getCodigo())) {
-					if(lista.get(i).getProduto().getQuantidadeMax() != (-(listaPedidos.get(j).getQuantidade() + listaPedidos.get(j).getQuantidadeTotalEstoqueMin() - lista.get(i).getProduto().getQuantidadeAtual()))) {
-						lista.get(i).getProduto().setQuantidadeMax(lista.get(i).getProduto().getQuantidadeMax() - listaPedidos.get(j).getQuantidade());
-						if(lista.get(i).getProduto().getComposicao() != null) {
-							for(int k = 0; k < lista.get(i).getProduto().getComposicao().size(); k++) {
-								for(int x =0 ; x < lista.size(); x++) {
-									if(lista.get(x).getProduto().getCodigo().equals(lista.get(i).getProduto().getComposicao().get(k).getProdutoParte().getCodigo())) {
-										lista.get(x).getProduto().setQuantidadeMax(lista.get(x).getProduto().getQuantidadeMax() - (listaPedidos.get(j).getQuantidade() * lista.get(i).getProduto().getComposicao().get(k).getQuantidade()));								}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return lista;
-	}
-	
 	
 	public Produto setandoQuantidade(int op, Produto produto, long l) {
 		if(op == 0) {
 			produto.setQuantidadeMax(-((produto.getQuantidadeMax()) - produto.getQuantidadeMax() + l) - produto.getQuantidadeMin());
-			//produto.setQuantidadePai(produto.getQuantidadeMax() + l);
 		}else {
 			produto.setQuantidadeMax(produto.getQuantidadeMax() - l );
-			//produto.setQuantidadePai(produto.getQuantidadePai() + produto.getQuantidadeMax() + l);
 		}
 		return produto;
 	}
@@ -417,7 +382,7 @@ public class PedidoService {
 									}
 									
 								}
-								produto = aa(listaPedidos, lista.get(k).getProduto());
+								produto = somarItensRepetido(listaPedidos, lista.get(k).getProduto());
 								lista.get(k).setProduto(produto);
 							}
 						}
@@ -428,12 +393,11 @@ public class PedidoService {
 		return lista;
 	}
 	
-	public Produto aa (List<PedidoProduto> lista, Produto produto) {
+	public Produto somarItensRepetido (List<PedidoProduto> lista, Produto produto) {
 		long valor = 0;
 		for(int x = 0; x < lista.size(); x++) {
 			if(lista.get(x).getProduto().getCodigo().equals(produto.getCodigo())) {
 				valor = (lista.get(x).getProduto().getQuantidadeMax() - lista.get(x).getProduto().getQuantidadePedidoDireto());
-				//valor = produto.getQuantidadeMax();
 				lista.remove(lista.get(x));
 			}else {
 				valor = produto.getQuantidadeMax();
@@ -465,7 +429,6 @@ public class PedidoService {
 	public ResponseEntity<List<Pedido>> buscarDemandas(String username){
 		List <Pedido> lista = listarSeparadamente("EM_PRODUCAO");
 		for(int i = 0; i < lista.size(); i++) {
-			//lista.get(i).setItens(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo())));
 			lista.get(i).setItens(setarCerto(pedidoProdutoRepository.findByPedido_statusAndPedido_codigo(SimpleEnum.Status.EM_PRODUCAO, lista.get(i).getCodigo())));
 		}
 		lista = ordernarPorPrioridade(lista);
@@ -500,7 +463,7 @@ public class PedidoService {
 	
 	
 	public String DiminuirEmbalagem(long codigoPedido, String codigo, int quantidade) {
-		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		Optional<Pedido> pedido = pedidoRepository.findById(codigoPedido);
 		int i;
 		for(i = 0; i < pedido.get().getItens().size(); i++){
 			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
@@ -512,7 +475,7 @@ public class PedidoService {
 	}
 	
 	public String AumentarEmbalagem(long codigoPedido) {
-		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		Optional<Pedido> pedido = pedidoRepository.findById(codigoPedido);
 		int i;
 		for(i = 0; i < pedido.get().getItens().size(); i++){
 			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
@@ -565,7 +528,7 @@ public class PedidoService {
 	}
 
 	public String DiminuirEmbalagem2(long codigoPedido) {
-		Optional<Pedido> pedido = pedidorepository.findById(codigoPedido);
+		Optional<Pedido> pedido = pedidoRepository.findById(codigoPedido);
 		int i;
 		for(i = 0; i < pedido.get().getItens().size(); i++){
 			Optional <Produto> prod = produtoRepository.findById(pedido.get().getItens().get(i).getProduto().getCodigo());
@@ -580,18 +543,18 @@ public class PedidoService {
 	}
 	
 	public List<Pedido> ordernarPorPrioridade(List<Pedido> lista){
-		lista = pedidorepository.findByStatusAndPrioridade();
+		lista = pedidoRepository.findByStatusAndPrioridade();
 		return lista;
 	}
 	
 	@Transactional
 	public int deletar(long codigo) {
-		Optional<Pedido> pedido = pedidorepository.findById(codigo);
+		Optional<Pedido> pedido = pedidoRepository.findById(codigo);
 		if((pedido.get().getStatus().equals(SimpleEnum.Status.EMBALADO)) || (pedido.get().getStatus().equals(SimpleEnum.Status.NOTA_EMITIDA))){
 			AumentarEmbalagem(codigo); 	// Caso_Exclua_Precisa_Incrementar_Novamente
 		}
 		pedidoProdutoRepository.deleteByPedido_codigo(codigo);
-		pedidorepository.deleteById(codigo);
+		pedidoRepository.deleteById(codigo);
 		return 1;
 	}
 	
@@ -616,18 +579,6 @@ public class PedidoService {
 		List<Pedido> pedidos = new ArrayList<>();
 		pedidos.add(pedido);
 		return pedidos;
-	}
-	
-	public Pedido pedidoOriginal(String username){
-		Pedido pedido = new Pedido();
-		pedido.setCodigo((long) 909091);
-		pedido.setNomeCliente("Estoque Minimo");
-		pedido.setPrioridade((long)99999);
-		pedido.setEndereco("Local");
-		pedido.setStatus(SimpleEnum.Status.EM_PRODUCAO);
-		List<PedidoProduto> itens = pedidoProdutoRepository.findByPedido_status(SimpleEnum.Status.EM_PRODUCAO);
-		pedido.setItens(itens);
-		return pedido;
 	}
 	
 	
